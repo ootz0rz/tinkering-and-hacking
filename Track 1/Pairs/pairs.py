@@ -30,7 +30,7 @@ def count_pairs(N, K, nums):
     for i, n in enumerate(nums2):
         nums2[i] = n + K
     
-    # make each list a set, find intersection, and count result
+    # take each list as a set, find intersection, and count result
     count = len(list(set(nums) & set(nums2)))
     
     return count
