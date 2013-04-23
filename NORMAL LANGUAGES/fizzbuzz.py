@@ -1,1 +1,1 @@
-for x in range(100):print "Fizz"*(x%3/2)+"Buzz"*(x%5/4)or x+1
+for x in range(100):print x%3/2*"Fizz"+x%5/4*"Buzz"or x+1
