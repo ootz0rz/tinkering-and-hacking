@@ -22,6 +22,7 @@ def quickSort(ar):
 
 	if len(final) > 1:
 		print " ".join([str(x) for x in final])
+		
 	return final
 
 import unittest
