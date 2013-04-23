@@ -16,6 +16,9 @@ RIGHT = "RIGHT"
 
 def _parse_grid_input(grid):
 	'''
+	Durr...stupid instructions on the site aren't very clear. But 'grid' is not
+	a single string, instead its one string per line for us already -.-
+
 	Return a 3-tuple:
 		First the grid parsed, as an array of arrays
 
@@ -27,7 +30,8 @@ def _parse_grid_input(grid):
 	res = []
 	you_pos = []
 	prin_pos = []
-	for i,line in enumerate(grid.split("\n")):
+	#for i,line in enumerate(grid.split("\n")):
+	for i,line in enumerate(grid):
 
 		res_line = []
 		for j,char in enumerate(line):
@@ -50,7 +54,7 @@ def _distance((x1, y1), (x2, y2)):
 	'''
 	Euclidean distance between px, py, each given as tuple (x, y)
 	'''
-	
+
 	return sqrt(
 		(x2 - x1) ** 2
 		+
