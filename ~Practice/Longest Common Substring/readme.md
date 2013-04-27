@@ -44,7 +44,7 @@ We have two basic cases:
 
 ### Case 2:
 
-Simply ![the empty set, \phi](http://www.sciweavers.org/tex2img.php?eq=%5Cphi&bc=Transparent&fc=Black&im=png&fs=12&ff=arev&edit=0) otherwise.
+Simply the empty set otherwise.
 
 ### Final Formulation
 
