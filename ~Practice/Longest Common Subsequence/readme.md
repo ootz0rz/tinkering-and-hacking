@@ -20,13 +20,19 @@ We have two basic cases...
 
 ## Case 1:
 `X_i, Y_j` end in the same character. Therefore, the last character (i.e. `X[i]` and `Y[j]`) is a part of the LCS. Thus we can compute the LCS as:
-	
-![LCS(X, Y) = LCS(X_{i-1}, Y_{j-1}) + X[i]](http://latex.codecogs.com/gif.latex?LCS(X,%20Y)%20=%20LCS(X_{i-1},%20Y_{j-1})%20+%20X[i])
+
+	LCS(X, Y)  =  LCS(X     , Y     )  +  X[i]
+	                   i - 1   j - 1          
+
+![LCS(X, Y) = LCS(X_{i-1}, Y_{j-1}) + X[i]](http://www.sciweavers.org/upload/Tex2Img_1367099812/eqn.png)
 
 ## Case 2:
 `X_i, Y_j` may have different endings in the sequence. We then wish to try and compute the LCS with each of `X` and `Y`'s last character removed, and then use the maximum length LCS of the two. That is:
 
-![MAX(LCS(X_{i-1}, Y_j), LCS(X_i, Y_{j-1}))](http://latex.codecogs.com/gif.latex?MAX(LCS(X_{i-1},%20Y_j),%20LCS(X_i,%20Y_{j-1})))
+	MAX(LCS(X     , Y ), LCS(X , Y     ))
+	         i - 1   j        i   j - 1  
+
+![MAX(LCS(X_{i-1}, Y_j), LCS(X_i, Y_{j-1}))](http://www.sciweavers.org/upload/Tex2Img_1367099737/eqn.png)
 
 # Final Formulation
 
