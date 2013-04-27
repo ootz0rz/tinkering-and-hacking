@@ -42,3 +42,6 @@ if __name__ == '__main__':
 	X = list("ACBDEGCEDBG")
 	Y = list("BEGCFEUBK")
 
+	res = list("BEGCEB")
+
+	print res == LCS(X,Y)
