@@ -38,6 +38,10 @@ def _LCS(X, Y, mem={}):
 	s2 = ""
 	maxLength = 0
 
+	# note that this isn't exactly the same as the formulated solution in the
+	# readme, as the readme starts with the entire string and works towards
+	# smaller ones, this starts with small strings and expands it to the entire
+	# final string
 	for x in X:
 		s1 = s1 + x
 		s2 = ""
