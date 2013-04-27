@@ -14,7 +14,7 @@ def LCS(X, Y, mem={}):
 	if not (i in mem):
 		mem[i] = {}
 
-	if not (j in mem[i])
+	if not (j in mem[i]):
 		mem[i][j] = []
 	
 	# LCS of any set and an empty set is the empty set
@@ -37,3 +37,8 @@ def LCS(X, Y, mem={}):
 			mem[i][j] = mY
 
 	return mem[i][j]
+
+if __name__ == '__main__':
+	X = list("ACBDEGCEDBG")
+	Y = list("BEGCFEUBK")
+
