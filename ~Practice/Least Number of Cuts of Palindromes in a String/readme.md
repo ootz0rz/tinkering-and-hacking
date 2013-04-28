@@ -28,17 +28,34 @@ That is...
 
 This table can be constructed in `O(n^2)` time, and can then be used for `O(1)` look ups later.
 
-We then construct a second table, `C[m][n]` such that:
+Basically what we do is, for each combination of cuts we compute, we assign some weight... and we use the solution with the smallest weight.
 
-	C[m][n] = MinCuts(S[m:n])
+In more detail...
 
-Where `MinCuts(S[m:n])` is the mininum cuts for the substring of `S`, between index `m` to `n`.
+Note that the maximum number of unique cuts for any string `S`, is `len(s) - 1`. 
 
-Our final answer would be `C[0][n]`, `n = len(S) - 1`
+	MaxCuts(S)  =  len(S)  -  1  =  {s , s , s , ..., s }
+	                                  1   2   3        n 
+
+![MaxCuts(S) = len(S) - 1 = \{s_1, s_2, s_3, \ldots, s_n\}](http://www.sciweavers.org/tex2img.php?eq=MaxCuts%28S%29%20%3D%20len%28S%29%20-%201%20%3D%20%5C%7Bs_1%2C%20s_2%2C%20s_3%2C%20%5Cldots%2C%20s_n%5C%7D&bc=Transparent&fc=Black&im=png&fs=12&ff=arev&edit=0)
+
+We basically go through MaxCuts(S) and remove `1` cut at a time, and check to see if it's a valid solution. If it is, we keep the current solution and then remove `1` cut further along (if possible) and validate. We continue this until we've calculated all valid solution(s).
+
+We then do the same, but removing `2` consecutive cuts at a time. Then `3` and so on until we've removed all cuts. The valid solution with the least number of cuts remaining is our final answer.
+
+This process gives us MinCuts(S)
 
 # Formulations
 
 ## MinCuts(S)
+
+Let `i, j` be the starting and ending index of a substring in S.
+
+Let `i = 0`, `j = len(s) - 1`
+
+We then define `MinCuts(S, i, j)` as the minimum number of cuts in the substring `S[i:j]`.
+
+
 
 ## SubPalindromes(S)
 
@@ -47,3 +64,8 @@ Our final answer would be `C[0][n]`, `n = len(S) - 1`
 ## ISP(x)
 
 ISP(x) -> True iff x == reverse(x)
+
+```python
+def ISP(x):
+	return x == x[::-1]
+```
