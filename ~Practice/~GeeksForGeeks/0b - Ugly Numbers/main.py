@@ -40,7 +40,7 @@ def UN(n=150):
 
 	return i
 
-def UNdp():
+def UNdp(n=150):
 	'''
 	Print the 150th Ugly Number using Dynamic Programming.
 	'''
