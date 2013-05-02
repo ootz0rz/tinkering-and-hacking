@@ -25,7 +25,7 @@ def add(a=[], b=0):
 			a.insert(0, 0)
 			res = cur + carry
 
-		a[-idx] = (res // 1 % 10)
+		a[-idx] = (res % 10)
 
 		carry = res / 10
 
