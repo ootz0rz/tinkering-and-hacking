@@ -39,9 +39,7 @@ def first(s):
 			if c in unique_idx:
 				del unique_idx[c]
 
-	keys = unique_idx.keys()
-
-	if len(keys) == 0:
+	if unique_idx == {}:
 		return None
 	else:
 		# make sure we return the first one in order...since no order gaurantee
