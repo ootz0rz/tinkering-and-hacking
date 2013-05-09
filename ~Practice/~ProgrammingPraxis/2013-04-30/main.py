@@ -39,7 +39,7 @@ def first(s):
 			if c in unique_idx:
 				del unique_idx[c]
 
-	if unique_idx == {}:
+	if not unique_idx:
 		return None
 	else:
 		# make sure we return the first one in order...since no order gaurantee
