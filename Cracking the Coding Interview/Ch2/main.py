@@ -91,3 +91,22 @@ def q2_4(n1, n2):
 
     print _n1, '+', _n2, '=', out
     return out
+
+def q2_5(head):
+    '''
+    Given a circular linked list, implement an algorithm which returns node at 
+    the beginning of the loop.
+    '''
+
+    '''
+    Basically, same as finding a cycle within a linked list. Have two pointers,
+    one moving at a pace of +1 nodes per cycle, another at +2 (twice as fast).
+
+    If the cycle is at the start, they will again meet at the start of the
+    loop. If we start n nodes away from the start of the cycle, they will
+    meet n nodes from the start of the cycle (but still within it). 
+
+    Once they meet, advance one of the pointers another n spots and that will
+    be the start of the cycle.
+    '''
+    pass

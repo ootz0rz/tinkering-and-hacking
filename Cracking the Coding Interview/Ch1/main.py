@@ -43,3 +43,30 @@ def q1_2(s, TERM='\0'):
         i += 1
 
     return s
+
+def q1_6():
+    '''
+    Rotate NxN matrix.
+
+    Basically, read each column from bottom left -> top right, and write as 
+    rows from top left to bottom right.
+
+        i.e. read col i from bottom to top, write as row i from left to right
+    '''
+    pass
+
+def q1_8(s1, s2):
+    '''
+    Check if s2 is a rotation of s1.
+        (ex s1='waterbottle', s2='erbottlewat')
+    '''
+    def isSubstring(_s1, _s2):
+        '''
+        True iff _s1 is a substring of _s2
+        '''
+        return _s1 in _s2
+
+    if len(s1) != len(s2):
+        return False
+
+    return isSubstring(s1, s2 * 2)
