@@ -23,7 +23,7 @@ class SimpleDB(object):
         # counts
         self.COUNTS = {}
 
-    def parse_and_exec(self, line):
+    def parse_and_exec(self, line, print_debug=False):
         '''
         Parse given line from CLI, and execute equivalent method.
         '''
@@ -48,7 +48,10 @@ class SimpleDB(object):
             args[0] = int(args[0], 10)
 
         retVal = self._run_command(command, args)
-        print line, '->', retVal
+
+        if print_debug:
+            print line, '->', retVal
+            
         return retVal
 
     def _run_command(self, command, args):
