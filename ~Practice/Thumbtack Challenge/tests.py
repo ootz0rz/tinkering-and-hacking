@@ -431,6 +431,77 @@ class TestSimpleDB(object):
 
         assert self.parse('END') is None
 
+    def test_complex_set_rollback_and_commit_mix_transaction(self):
+        assert self.parse('NUMEQUALTO 10') == 0
+        assert self.parse('NUMEQUALTO 20') == 0
+
+        assert self.parse('SET a 10') is None
+        assert self.parse('GET a') == 10
+        assert self.parse('NUMEQUALTO 10') == 1
+        assert self.parse('NUMEQUALTO 20') == 0
+
+        assert self.parse('BEGIN') is None
+        assert self.d.is_in_transaction()
+        assert self.d.get_transaction_level() == 1
+        assert self.parse('SET b 10') is None
+        assert self.parse('GET b') == 10
+        assert self.parse('NUMEQUALTO 10') == 2
+        assert self.parse('NUMEQUALTO 20') == 0
+
+        assert self.parse('BEGIN') is None
+        assert self.d.is_in_transaction()
+        assert self.d.get_transaction_level() == 2
+        assert self.parse('SET c 10') is None
+        assert self.parse('GET c') == 10
+        assert self.parse('NUMEQUALTO 10') == 3
+        assert self.parse('NUMEQUALTO 20') == 0
+
+        assert self.parse('ROLLBACK') is None
+        assert self.d.is_in_transaction()
+        assert self.d.get_transaction_level() == 1
+        assert self.parse('GET a') == 10
+        assert self.parse('GET b') == 10
+        assert self.parse('GET c') == sNULL
+        assert self.parse('NUMEQUALTO 10') == 2
+        assert self.parse('NUMEQUALTO 20') == 0
+
+        assert self.parse('COMMIT') is None
+        assert not self.d.is_in_transaction()
+        assert self.d.get_transaction_level() == 0
+        assert self.parse('GET a') == 10
+        assert self.parse('GET b') == 10
+        assert self.parse('GET c') == sNULL
+        assert self.parse('NUMEQUALTO 10') == 2
+        assert self.parse('NUMEQUALTO 20') == 0
+
+        assert self.parse('SET b 20') is None
+        assert self.parse('GET b') == 20
+        assert self.parse('NUMEQUALTO 10') == 1 
+        assert self.parse('NUMEQUALTO 20') == 1
+
+        assert self.parse('BEGIN') is None
+        assert self.d.is_in_transaction()
+        assert self.d.get_transaction_level() == 1
+        assert self.parse('UNSET a') is None
+        assert self.parse('UNSET b') is None
+        assert self.parse('GET a') == sNULL
+        assert self.parse('GET b') == sNULL
+        assert self.parse('GET c') == sNULL
+        assert self.parse('NUMEQUALTO 10') == 0 
+        assert self.parse('NUMEQUALTO 20') == 0
+
+        assert self.parse('ROLLBACK') is None
+        assert not self.d.is_in_transaction()
+        assert self.d.get_transaction_level() == 0
+        assert self.parse('GET a') == 10
+        assert self.parse('GET b') == 20
+        assert self.parse('GET c') == sNULL
+        assert self.parse('NUMEQUALTO 10') == 1 
+        assert self.parse('NUMEQUALTO 20') == 1
+
+        assert self.parse('END') is None
+
+
 if __name__ == '__main__':
     import nose
     nose.main()

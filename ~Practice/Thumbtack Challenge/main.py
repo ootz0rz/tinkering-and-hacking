@@ -31,17 +31,19 @@ class SimpleDB(object):
         allows us to only have to store at most 1 state item per variable in
         the database, per transaction. i.e. using at most O(N) storage per
         transaction, where N is the number of variables modified during the 
-        transaction.
+        transaction. This is as opposed to storing a stack of all the commands
+        or their reverse, that have been executed per transaction, to calculate
+        a rollback.
 
-        This means that commit operations are super fast as well, as nothing 
-        needs to be done except removing the transaction state information 
-        from memory.
+        This means that COMMIT operations are fast as well, as no calculations 
+        need to be done; only removing the transaction state information from
+        memory.
 
-        Thus, the only slow operation, computationally, is ROLLBACK which runs
-        in O(N) where N is the number of variables modified during the 
-        transaction. It also updates the dictionary for NUMEQUALTO to reflect
-        the current state after a rollback. It would have been possible to
-        store this data within the transaction state as well, but that would
+        Thus the only slow operation computationally is ROLLBACK, which runs
+        in O(2N) -> O(N) where N is the number of variables modified during the 
+        transaction, since it also updates the dictionary for NUMEQUALTO to 
+        reflect the current state after a rollback. It would have been possible
+        to store this data within the transaction state as well, but that would
         require more memory, where as there were no restrictions on run time
         for ROLLBACK.
 
@@ -95,16 +97,13 @@ class SimpleDB(object):
 
         command = command.upper()
 
-        # these commands have the name as first arg
-        if command in [sSET, sGET, sUNSET]:
+        # commands that specify a value after the name
+        if command == sSET:
+            if len(args) > 0:
+                args[1] = int(args[1], 10)
 
-            # these commands specify a value after the name
-            if command in [sSET]:
-                if len(args) > 0:
-                    args[1] = int(args[1], 10)
-
-        # these commands have the value as first arg
-        elif command in [sNUMEQUALTO]:
+        # commands that have the value as first arg
+        elif command == sNUMEQUALTO:
             args[0] = int(args[0], 10)
 
         retVal = self._run_cli_command(command, args)
@@ -119,8 +118,7 @@ class SimpleDB(object):
         Given the CLI text for the command and the parse argument list, run
         the corresponding method.
         '''
-        func = self.COMMANDS[command]
-        return func(*args)
+        return self.COMMANDS[command](*args)
 
     def _get_cur_stack(self):
         '''
@@ -173,19 +171,20 @@ class SimpleDB(object):
         Remove the variable with the given name from the database.
         '''
         if name in self.CUR_DATA:
-            cur_val = self.CUR_DATA[name]
+            old_val = self.CUR_DATA[name]
 
             del self.CUR_DATA[name]
 
             # update count
-            if cur_val in self.COUNTS:
-                self.COUNTS[cur_val] -= 1
-            else:
-                del self.COUNTS[cur_val]
+            if old_val in self.COUNTS:
+                self.COUNTS[old_val] -= 1
+
+                if self.COUNTS[old_val] <= 0:
+                    del self.COUNTS[old_val]
 
             # update transaction state if necessary
             if self.is_in_transaction() and not (name in self._get_cur_stack()):
-                self._get_cur_stack()[name] = cur_val
+                self._get_cur_stack()[name] = old_val
 
     def _num_equal_to(self, value):
         '''
@@ -207,9 +206,7 @@ class SimpleDB(object):
         '''
         Opens a transaction block.
         '''
-        if not self.is_in_transaction():
-            self.in_transaction = True
-
+        self.in_transaction = True
         self.TRANSACTION_DATA.append({})
 
     def _commit(self):
@@ -249,7 +246,6 @@ class SimpleDB(object):
         Reset transaction state to default.
         '''
         self.in_transaction = False
-        self.cur_transaction = -1
 
         # transactional stacks, each will hold the state of the variables
         # touched during the transaction as they were before the stack was 
