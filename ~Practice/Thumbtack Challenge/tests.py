@@ -169,6 +169,69 @@ class TestSimpleDB(object):
 
         assert self.parse('END') is None
 
+    # -------------------------------------------------------------------------
+    # transactions
+    # -------------------------------------------------------------------------
+
+    def test_default_no_transaction(self):
+        assert not self.d.is_in_transaction() 
+        assert self.d.cur_transaction == -1
+
+    def test_start_transaction(self):
+        assert self.parse('BEGIN') is None
+        assert self.d.is_in_transaction()
+        assert self.d.cur_transaction == 0
+
+        assert self.parse('END') is None
+
+    def test_simple_start_and_commit_empty_transaction(self):
+        assert self.parse('BEGIN') is None
+        assert self.d.is_in_transaction()
+        assert self.d.cur_transaction == 0
+
+        assert self.parse('COMMIT') is None
+        assert not self.d.is_in_transaction() 
+        assert self.d.cur_transaction == -1
+
+        assert self.parse('END') is None
+
+    def test_simple_start_and_commit_changes_transaction(self):
+        assert self.parse('SET ex 10') is None
+        assert self.parse('GET ex') == 10
+
+        assert self.parse('BEGIN') is None
+        assert self.d.is_in_transaction()
+        assert self.d.cur_transaction == 0
+
+        assert self.parse('SET ex 20') is None
+        assert self.parse('GET ex') == 20
+
+        assert self.parse('COMMIT') is None
+        assert not self.d.is_in_transaction() 
+        assert self.d.cur_transaction == -1
+        assert self.parse('GET ex') == 20
+
+        assert self.parse('END') is None
+
+    def test_simple_start_and_rollback_changes_transaction(self):
+        assert self.parse('SET ex 10') is None
+        assert self.parse('GET ex') == 10
+
+        assert self.parse('BEGIN') is None
+        assert self.d.is_in_transaction()
+        assert self.d.cur_transaction == 0
+
+        assert self.parse('SET ex 20') is None
+        assert self.parse('GET ex') == 20
+
+        assert self.parse('ROLLBACK') is None
+        assert not self.d.is_in_transaction() 
+        assert self.d.cur_transaction == -1
+        assert self.parse('GET ex') == 10
+
+        assert self.parse('END') is None
+
+
 if __name__ == '__main__':
     import nose
     nose.main()

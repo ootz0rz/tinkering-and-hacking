@@ -5,7 +5,15 @@ sNUMEQUALTO = 'NUMEQUALTO'
 sEND = 'END'
 sNULL = 'NULL'
 
+sBEGIN = 'BEGIN'
+sROLLBACK = 'ROLLBACK'
+sCOMMIT = 'COMMIT'
+
 class SimpleDB(object):
+    '''
+    A simple database that allows for storage and retrieval of data, and basic
+    transactional commits, designed to be used from a command line interface.
+    '''
 
     def __init__(self):
         # Mapping between CLI commands and methods
@@ -14,7 +22,11 @@ class SimpleDB(object):
             sGET : self._get,
             sUNSET: self._unset,
             sNUMEQUALTO: self._num_equal_to,
-            sEND : self._end
+            sEND : self._end,
+
+            sBEGIN : self._begin,
+            sCOMMIT : self._commit,
+            sROLLBACK : self._rollback
         }
 
         # current values stored
@@ -22,6 +34,14 @@ class SimpleDB(object):
 
         # counts
         self.COUNTS = {}
+
+        # transactional stacks
+        self.TRANSACTION_STACKS = []
+        self.in_transaction = False
+        self.cur_transaction = -1
+
+    def is_in_transaction(self):
+        return self.in_transaction
 
     def parse_and_exec(self, line, print_debug=False):
         '''
@@ -51,7 +71,7 @@ class SimpleDB(object):
 
         if print_debug:
             print line, '->', retVal
-            
+
         return retVal
 
     def _run_command(self, command, args):
@@ -107,10 +127,24 @@ class SimpleDB(object):
     def _end(self):
         pass
 
+    def _begin(self):
+        if not self.is_in_transaction():
+            self.in_transaction = True
+            self.cur_transaction = -1
+
+        self.cur_transaction += 1
+
+    def _commit(self):
+        self.in_transaction = False
+        self.cur_transaction = -1
+
+    def _rollback(self):
+        pass
+
 if __name__ == '__main__':
     d = SimpleDB()
 
-    # read input and exec commands
+    # read from stdin/file and exec commands
     import fileinput
 
     for line in fileinput.input():
