@@ -24,18 +24,26 @@ class SimpleDB(object):
         This means, to keep NUMEQUALTO fast, additional memory is required for
         its corresponding dictionary as well.
 
-        Transactions currently store the reverse of any commands executed, so 
-        that they may be literally rolled back. This might end up requiring a 
-        lot of memory for larger transactions, as a lot of state information 
-        is stored. 
+        Since it's noted that transactions will only modify a small number of
+        individual variables, but can then potentially have many different
+        commands per transaction, each transaction keeps track of what the
+        database state looked like before the transactions current state. This
+        allows us to only have to store at most 1 state item per variable in
+        the database, per transaction. i.e. using at most O(N) storage per
+        transaction, where N is the number of variables modified during the 
+        transaction.
 
         This means that commit operations are super fast as well, as nothing 
         needs to be done except removing the transaction state information 
         from memory.
 
-        Thus, the only slow operation is ROLLBACK which runs in O(M) where M 
-        is the number of commands executed within that transaction that modify
-        any values.
+        Thus, the only slow operation, computationally, is ROLLBACK which runs
+        in O(N) where N is the number of variables modified during the 
+        transaction. It also updates the dictionary for NUMEQUALTO to reflect
+        the current state after a rollback. It would have been possible to
+        store this data within the transaction state as well, but that would
+        require more memory, where as there were no restrictions on run time
+        for ROLLBACK.
     '''
 
     def __init__(self):
@@ -103,6 +111,9 @@ class SimpleDB(object):
         func = self.COMMANDS[command]
         return func(*args)
 
+    def _get_cur_stack(self):
+        return self.TRANSACTION_STACKS[-1]
+
     def _set(self, name, value):
         # retain old value for count update
         old_val = None
@@ -124,11 +135,11 @@ class SimpleDB(object):
                 self.COUNTS[old_val] -= 1
 
         # update transaction state if necessary
-        if self.is_in_transaction():
+        if self.is_in_transaction() and not (name in self._get_cur_stack()):
             if old_val is not None:
-                self.TRANSACTION_STACKS[-1].append((sSET, [name, old_val]))
+                self._get_cur_stack()[name] = old_val
             else:
-                self.TRANSACTION_STACKS[-1].append((sUNSET, [name]))
+                self._get_cur_stack()[name] = None
 
     def _get(self, name):
         if not (name in self.CUR_DATA):
@@ -149,8 +160,8 @@ class SimpleDB(object):
                 del self.COUNTS[cur_val]
 
             # update transaction state if necessary
-            if self.is_in_transaction():
-                self.TRANSACTION_STACKS[-1].append((sSET, [name, cur_val]))
+            if self.is_in_transaction() and not (name in self._get_cur_stack()):
+                self._get_cur_stack()[name] = cur_val
 
     def _num_equal_to(self, value):
         if value in self.COUNTS:
@@ -165,7 +176,7 @@ class SimpleDB(object):
         if not self.is_in_transaction():
             self.in_transaction = True
 
-        self.TRANSACTION_STACKS.append([])
+        self.TRANSACTION_STACKS.append({})
 
     def _commit(self):
         if self.is_in_transaction():
@@ -179,13 +190,17 @@ class SimpleDB(object):
             cur_stack = self.TRANSACTION_STACKS.pop()
 
             self.in_transaction = False
-            while len(cur_stack) > 0:
-                command, args = cur_stack.pop()
-                self._run_cli_command(command, args)
+            for name, value in cur_stack.items():
+                if value is None:
+                    self._unset(name)
+                else:
+                    self._set(name, value)
             self.in_transaction = True
 
             if self.get_transaction_level() == 0:
                 self.__reset_transactions()
+
+            self.__update_num_equal_to()
         else:
             return sNO_TRANSACTION
 
@@ -193,12 +208,30 @@ class SimpleDB(object):
         self.in_transaction = False
         self.cur_transaction = -1
 
-        # transactional stacks, each will hold a list of all the commands 
-        # required to revert to a state before the transaction began
+        # transactional stacks, each will hold the state of the variables
+        # touched during the transaction as they were before the stack was 
+        # created.
         #
         # Format:
-        #   [(cmd, [arg1, arg2, ...]), (cmd2, [arg1, ...]), ...]
+        # {
+        #     'name': previous value/None,
+        #     'name2': previous value/None,
+        #     ...
+        # }
+        #
+        # Where a value of None would mean this variable did not exist before
         self.TRANSACTION_STACKS = []
+
+    def __update_num_equal_to(self):
+        '''
+        Re-calculate the number of occurances per each value in our database.
+        '''
+        self.COUNTS = {}
+
+        for name, value in self.CUR_DATA.items():
+            if not (value in self.COUNTS):
+                self.COUNTS[value] = 0
+            self.COUNTS[value] += 1
 
 if __name__ == '__main__':
     d = SimpleDB()
