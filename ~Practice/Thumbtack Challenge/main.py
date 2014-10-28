@@ -44,6 +44,11 @@ class SimpleDB(object):
         store this data within the transaction state as well, but that would
         require more memory, where as there were no restrictions on run time
         for ROLLBACK.
+
+        Also, wasn't 100% clear on this, but it seemed like that database only
+        had to deal with integers from the examples. So it assumes input will
+        be integers. This could easily be changed in the parse_and_exec method
+        though.
     '''
 
     def __init__(self):
@@ -69,10 +74,16 @@ class SimpleDB(object):
         self.__reset_transactions()
 
     def is_in_transaction(self):
+        '''
+        True iff we're currently within a transaction block.
+        '''
         return self.in_transaction
 
     def get_transaction_level(self):
-        return len(self.TRANSACTION_STACKS)
+        '''
+        The level of our current block.
+        '''
+        return len(self.TRANSACTION_DATA)
 
     def parse_and_exec(self, line, print_debug=False):
         '''
@@ -112,9 +123,16 @@ class SimpleDB(object):
         return func(*args)
 
     def _get_cur_stack(self):
-        return self.TRANSACTION_STACKS[-1]
+        '''
+        Return the current transaction block's data
+        '''
+        return self.TRANSACTION_DATA[-1]
 
     def _set(self, name, value):
+        '''
+        Set a variable in the database with the given string name, to the given
+        integer value.
+        '''
         # retain old value for count update
         old_val = None
         if name in self.CUR_DATA:
@@ -142,12 +160,18 @@ class SimpleDB(object):
                 self._get_cur_stack()[name] = None
 
     def _get(self, name):
+        '''
+        Get the current value of the variable with the given name.
+        '''
         if not (name in self.CUR_DATA):
             return sNULL
 
         return self.CUR_DATA[name]
 
     def _unset(self, name):
+        '''
+        Remove the variable with the given name from the database.
+        '''
         if name in self.CUR_DATA:
             cur_val = self.CUR_DATA[name]
 
@@ -164,30 +188,46 @@ class SimpleDB(object):
                 self._get_cur_stack()[name] = cur_val
 
     def _num_equal_to(self, value):
+        '''
+        Return an integer value denoting how many variables have the given
+        value within the database.
+        '''
         if value in self.COUNTS:
             return self.COUNTS[value]
 
         return 0
 
     def _end(self):
+        '''
+        End execution.
+        '''
         pass
 
     def _begin(self):
+        '''
+        Opens a transaction block.
+        '''
         if not self.is_in_transaction():
             self.in_transaction = True
 
-        self.TRANSACTION_STACKS.append({})
+        self.TRANSACTION_DATA.append({})
 
     def _commit(self):
+        '''
+        Commits all currently open transactions.
+        '''
         if self.is_in_transaction():
             self.__reset_transactions()
         else:
             return sNO_TRANSACTION
 
     def _rollback(self):
+        '''
+        Roll back the current transaction.
+        '''
         if self.is_in_transaction():
             # roll back the most recent transaction only
-            cur_stack = self.TRANSACTION_STACKS.pop()
+            cur_stack = self.TRANSACTION_DATA.pop()
 
             self.in_transaction = False
             for name, value in cur_stack.items():
@@ -205,6 +245,9 @@ class SimpleDB(object):
             return sNO_TRANSACTION
 
     def __reset_transactions(self):
+        '''
+        Reset transaction state to default.
+        '''
         self.in_transaction = False
         self.cur_transaction = -1
 
@@ -220,7 +263,7 @@ class SimpleDB(object):
         # }
         #
         # Where a value of None would mean this variable did not exist before
-        self.TRANSACTION_STACKS = []
+        self.TRANSACTION_DATA = []
 
     def __update_num_equal_to(self):
         '''
