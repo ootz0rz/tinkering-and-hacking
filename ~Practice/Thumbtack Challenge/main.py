@@ -20,6 +20,9 @@ class SimpleDB(object):
         # current values stored
         self.CUR_DATA = {}
 
+        # counts
+        self.COUNTS = {}
+
     def parse_and_exec(self, line):
         '''
         Parse given line from CLI, and execute equivalent method.
@@ -40,6 +43,10 @@ class SimpleDB(object):
                 if command in [sSET]:
                     args[1] = int(args[1], 10)
 
+        # these commands have the value as first arg
+        elif command in [sNUMEQUALTO]:
+            args[0] = int(args[0], 10)
+
         retVal = self._run_command(command, args)
         print line, '->', retVal
         return retVal
@@ -53,7 +60,22 @@ class SimpleDB(object):
         return func(*args)
 
     def _set(self, name, value):
+        old_val = None
+        if name in self.CUR_DATA:
+            old_val = self.CUR_DATA[name]
+
         self.CUR_DATA[name] = value
+
+        # update counts
+        if not (value in self.COUNTS):
+            self.COUNTS[value] = 0
+        self.COUNTS[value] += 1
+
+        if old_val is not None:
+            if self.COUNTS[old_val] == 1:
+                del self.COUNTS[old_val]
+            else:
+                self.COUNTS[old_val] -= 1
 
     def _get(self, name):
         if not (name in self.CUR_DATA):
@@ -62,10 +84,22 @@ class SimpleDB(object):
         return self.CUR_DATA[name]
 
     def _unset(self, name):
-        pass
+        if name in self.CUR_DATA:
+            cur_val = self.CUR_DATA[name]
+
+            del self.CUR_DATA[name]
+
+            # update count
+            if cur_val in self.COUNTS:
+                self.COUNTS[cur_val] -= 1
+            else:
+                del self.COUNTS[cur_val]
 
     def _num_equal_to(self, value):
-        pass
+        if value in self.COUNTS:
+            return self.COUNTS[value]
+
+        return 0
 
     def _end(self):
         pass
@@ -77,4 +111,10 @@ if __name__ == '__main__':
     import fileinput
 
     for line in fileinput.input():
-        d.parse_and_exec(line)
+        val = d.parse_and_exec(line)
+
+        if val is not None:
+            print str(val)
+
+        if sEND in line:
+            break
