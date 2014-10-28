@@ -31,17 +31,19 @@ class SimpleDB(object):
         allows us to only have to store at most 1 state item per variable in
         the database, per transaction. i.e. using at most O(N) storage per
         transaction, where N is the number of variables modified during the 
-        transaction.
+        transaction. This is as opposed to storing a stack of all the commands
+        or their reverse, that have been executed per transaction, to calculate
+        a rollback.
 
-        This means that commit operations are super fast as well, as nothing 
-        needs to be done except removing the transaction state information 
-        from memory.
+        This means that COMMIT operations are fast as well, as no calculations 
+        need to be done; only removing the transaction state information from
+        memory.
 
-        Thus, the only slow operation, computationally, is ROLLBACK which runs
-        in O(N) where N is the number of variables modified during the 
-        transaction. It also updates the dictionary for NUMEQUALTO to reflect
-        the current state after a rollback. It would have been possible to
-        store this data within the transaction state as well, but that would
+        Thus the only slow operation computationally is ROLLBACK, which runs
+        in O(2N) -> O(N) where N is the number of variables modified during the 
+        transaction, since it also updates the dictionary for NUMEQUALTO to 
+        reflect the current state after a rollback. It would have been possible
+        to store this data within the transaction state as well, but that would
         require more memory, where as there were no restrictions on run time
         for ROLLBACK.
 
