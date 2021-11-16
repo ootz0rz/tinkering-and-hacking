@@ -10,51 +10,43 @@ class Solution:
             if debug: print(f'head<{head}> == first<{None}>')
             return None
 
-        nodemap = {} # orig_node -> orig_idx
-        idxmap = {} # orig_idx -> new node
+        oldnode_to_newnode = {} # oldnode -> newnode
 
-        o = Node(0)
+        o = Node(head.val)
         first = o
-        idxmap[0] = first
+        oldnode_to_newnode[head] = o
 
         pointer = head
-
-        idx = 0
         while pointer is not None:
-            if not (pointer in nodemap):
-                nodemap[pointer] = idx
-
             target_value = pointer.val
             target_random = pointer.random
 
-            print(f'target_value: {target_value}, target_random: {target_random}')
             node_random = None
             if not (target_random is None):
-                if not (target_random in idxmap):
-                    node_random = idxmap[target_random] = Node(0)
+                if not (target_random in oldnode_to_newnode):
+                    node_random = oldnode_to_newnode[target_random] = Node(target_random.val)
+                else:
+                    node_random = oldnode_to_newnode[target_random]
 
             curr = None
-            if not (idx in idxmap):
-                idxmap[idx] = curr = Node(target_value, node_random)
+            if not (pointer in oldnode_to_newnode):
+                curr = oldnode_to_newnode[pointer] = Node(target_value)
             else:
-                curr = idxmap[idx]
-                curr.val = target_value
-                curr.random = node_random
+                curr = oldnode_to_newnode[pointer]
 
-            next_idx = idx + 1
-            target_next = None
+            node_next = None
             if pointer.next is not None:
-                if not (next_idx in idxmap):
-                    idxmap[next_idx] = target_next = Node(0)
+                if not (pointer.next in oldnode_to_newnode):
+                    oldnode_to_newnode[pointer.next] = node_next = Node(pointer.next.val)
                 else:
-                    target_next = idxmap[next_idx]
+                    node_next = oldnode_to_newnode[pointer.next]
 
-            curr.next = target_next
+            curr.next = node_next
+            curr.random = node_random
 
-            idx = next_idx
             pointer = pointer.next
 
-        if debug: print(f'head<{head}> == first<{first}>')
+
         return first
 
 
@@ -69,8 +61,10 @@ if __name__ == '__main__':
     # print(str(lng([[1,1],[2,1],[3,None]])))
 
     # assert str(s.copyRandomList(lng([]))) == str(lng([]))
-    a = lng([[1,1],[2,1]])
-    b = lng([[1,1],[2,1]])
+    # a = lng([[1,1],[2,1]])
+    # b = lng([[1,1],[2,1]])
+    a = lng([[7,None],[13,0],[11,4],[10,2],[1,0]])
+    b = lng([[7,None],[13,0],[11,4],[10,2],[1,0]])
     print(f'---- A ----\n{a}\n')
     print(f'---- B ----\n{a}\n')
     assert str(s.copyRandomList(a)) == str(b)
