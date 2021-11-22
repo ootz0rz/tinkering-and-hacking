@@ -13,6 +13,7 @@ class Solution:
         idx = 0
 
         k_val = None
+        # O(n)
         while idx < len(nums) - 1:
             cur_missing = nums[idx + 1] - nums[idx] - 1
 
