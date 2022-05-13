@@ -4,7 +4,7 @@ from typing import List
 NOT_FOUND = -1
 NOT_FOUND_ARR = [NOT_FOUND, NOT_FOUND]
 
-
+# https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
 class Solution:
     def searchRange(self, nums: List[int], target: int) -> List[int]:
         global NOT_FOUND_ARR
@@ -12,7 +12,6 @@ class Solution:
         # find the target if we can...
         start = self._findStart(nums, target)
         if start == NOT_FOUND:
-            print(f"! Start Not Found => result: {NOT_FOUND_ARR}")
             return NOT_FOUND_ARR
 
         end = self._findEnd(nums, target)
@@ -37,38 +36,27 @@ class Solution:
             pivot = (i + j) // 2
             cur = nums[pivot]
 
-            print(
-                f"{('start' if find_start else 'end')} -- i:{i} j:{j} pivot:{pivot} cur:{cur} | {target} in {nums}"
-            )
-
             if cur == target:
                 # at this point we know the value at pivot is equal to our target
                 if find_start:
                     if pivot == i or nums[pivot - 1] < target:
                         # we're at the start of our sequence
-                        print(f"\t -> Start Found: {pivot}:{cur}")
                         return pivot
 
                     # otherwise keep searching
-                    print(f"\t -> Continue Start Search: j:{j} -> {pivot-1}")
                     j = pivot - 1
                 else:
                     if pivot == j or nums[pivot + 1] > target:
                         # we're at the end of our sequence
-                        print(f"\t -> End Found: {pivot}:{cur}")
                         return pivot
 
                     # otherwise keep searching
-                    print(f"\t -> Continue End Search: i:{i} -> {pivot+1}")
                     i = pivot + 1
             elif cur > target:
-                print(f"\t -> {cur} > {target}: j:{i} -> {pivot-1}")
                 j = pivot - 1
             else:
-                print(f"\t -> {cur} <= {target}: i:{i} -> {pivot+1}")
                 i = pivot + 1
 
-        print(f"{('start' if find_start else 'end')} => result: {res}")
         return res
 
 
