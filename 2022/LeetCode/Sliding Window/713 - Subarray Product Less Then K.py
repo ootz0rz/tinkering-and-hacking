@@ -1,6 +1,9 @@
 from typing import List
 
 
+"""
+# This works but is way too slow
+
 class Solution:
     def numSubarrayProductLessThanK(self, nums: List[int], k: int) -> int:
         print(f"--- Start {nums} < {k}")
@@ -34,6 +37,29 @@ class Solution:
             i += 1
 
         return results
+"""
+
+
+class Solution:
+    def numSubarrayProductLessThanK(self, nums, k):
+        # print(f"___ START___ {nums} < k:{k}")
+        result = 0
+
+        if k <= 1:
+            return result
+
+        product = 1
+        left = 0
+        for right, rval in enumerate(nums):
+            product = product * rval
+
+            while product >= k:
+                product /= nums[left]
+                left = left + 1
+
+            result += right - left + 1
+
+        return result
 
 
 if __name__ == "__main__":
