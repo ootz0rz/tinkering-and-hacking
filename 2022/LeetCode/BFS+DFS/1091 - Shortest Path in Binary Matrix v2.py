@@ -52,23 +52,33 @@ class Solution:
 
         ## -- end helpers --
 
+        v = {(0, 0)}
         q = deque()
         q.append((0, 0))
-        grid[0][0] = 1  # distance 1 at start
+
+        path = 1
 
         while len(q) > 0:
-            ix, iy = q.popleft()
+            q_len = len(q)
 
-            path = grid[ix][iy]
+            while q_len > 0:
+                ix, iy = q.popleft()
 
-            # did we finish?
-            if ix == goalX and iy == goalY:
-                return path
+                # did we finish?
+                if ix == goalX and iy == goalY:
+                    return path
 
-            # if not, queue empty neighbors and set their new distance
-            for itemx, itemy in get_adjacent_empty(ix, iy):
-                grid[itemx][itemy] = path + 1
-                q.append((itemx, itemy))
+                # if not, queue empty neighbors and set their new distance
+                for n in get_adjacent_empty(ix, iy):
+                    if n in v:
+                        continue
+
+                    v.add(n)
+                    q.append(n)
+
+                q_len = q_len - 1
+
+            path = path + 1
 
         # no possible path
         return -1
