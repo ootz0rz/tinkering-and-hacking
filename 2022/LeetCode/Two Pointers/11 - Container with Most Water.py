@@ -22,14 +22,14 @@ class Solution:
         return highest
 
 
-if __name__ == "__main__":
-    s = Solution()
+# if __name__ == "__main__":
+# s = Solution()
 
-    def checkSolution(nums, target, expected, msg="Expected `{0}` but got `{1}`"):
-        r = s.searchRange(nums, target)
-        assert r == expected, msg.format(expected, r)
+# def checkSolution(nums, target, expected, msg="Expected `{0}` but got `{1}`"):
+#     r = s.searchRange(nums, target)
+#     assert r == expected, msg.format(expected, r)
 
-    checkSolution(nums=[5, 7, 7, 8, 8, 10], target=8, expected=[3, 4])
+# checkSolution(nums=[5, 7, 7, 8, 8, 10], target=8, expected=[3, 4])
 
 
 # https://leetcode.com/problems/container-with-most-water/
