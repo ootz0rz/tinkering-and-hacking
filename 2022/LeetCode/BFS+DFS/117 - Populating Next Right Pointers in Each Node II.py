@@ -72,10 +72,10 @@ def TREE_TO_OUTPUT_LIST(node: "Node", out=[]) -> List:
 
     # print(f"N: {node} out:{out}")
 
-    next = node
-    while next is not None:
-        out.append(next.val)
-        next = next.next
+    next_ = node
+    while next_ is not None:
+        out.append(next_.val)
+        next_ = next_.next
 
     out.append(None)
 
@@ -107,13 +107,13 @@ class Solution:
                 node = o.popleft()
 
                 if node.left is not None:
-                    o.put(node.left)
+                    o.append(node.left)
 
                 if node.right is not None:
-                    o.put(node.right)
+                    o.append(node.right)
 
-                next = i + 1
-                if next >= n:
+                next_ = i + 1
+                if next_ >= n:
                     break
 
                 # print(f"Current Node: {node} next: {o[next]}")

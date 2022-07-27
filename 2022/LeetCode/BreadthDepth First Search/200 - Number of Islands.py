@@ -1,61 +1,51 @@
-# https://leetcode.com/problems/number-of-islands/
-
+from collections import defaultdict
 from typing import List
-
-
-FILLED = "1"
-EMPTY = "0"
-
-
-def val_at(x, y, grid):
-    if is_valid(x, y, grid):
-        return grid[x][y]
-
-    return EMPTY
-
-
-def is_valid(x, y, grid):
-    return x >= 0 and y >= 0 and x < len(grid) and y < len(grid[0])
-
-
-def is_visited(x, y, grid):
-    return val_at(x, y, grid) == EMPTY
-
-
-def explore_island(sx, sy, grid):
-    if is_valid(sx, sy, grid) and grid[sx][sy] == FILLED:
-        grid[sx][sy] = EMPTY
-
-        explore_island(sx + 1, sy, grid)
-        explore_island(sx - 1, sy, grid)
-        explore_island(sx, sy + 1, grid)
-        explore_island(sx, sy - 1, grid)
 
 
 class Solution:
     def numIslands(self, grid: List[List[str]]) -> int:
-        if len(grid) == 0 or len(grid[0]) == 0:
-            return 0
+        """
+        The idea is that we're going to search for a '1' and once we find it, via dfs, we mark all nearby '1's as 0.
+        We thus eliminate one island at a time, and just keep searching for more...
+        """
+        result = 0
 
-        islands = 0
+        rows = len(grid)
+        cols = len(grid[0])
 
-        # search for first filled
-        for ix, xrow in enumerate(grid):
-            # print(f"x:{ix} row:{xrow}")
-            for iy, cell in enumerate(xrow):
+        def eliminate(ridx, cidx):
+            if (
+                ridx < 0
+                or cidx < 0
+                or ridx >= rows
+                or cidx >= cols
+                or grid[ridx][cidx] != "1"
+            ):
+                return
 
-                if cell == FILLED:
-                    explore_island(ix, iy, grid)
-                    islands = islands + 1
+            grid[ridx][cidx] = 0
 
-        return islands
+            eliminate(ridx + 1, cidx)
+            eliminate(ridx - 1, cidx)
+            eliminate(ridx, cidx + 1)
+            eliminate(ridx, cidx - 1)
+
+        for ridx, r in enumerate(grid):
+            for cidx, c in enumerate(r):
+                if c == "1":
+                    eliminate(ridx, cidx)
+
+                    result = result + 1
+
+        return result
 
 
 if __name__ == "__main__":
-    s = Solution()
+    sol = Solution()
 
     def checkSolution(grid, expected, msg="Expected `{0}` but got `{1}`"):
-        r = s.numIslands(grid)
+        r = sol.numIslands(grid)
+        print(flush=True)
         assert r == expected, msg.format(expected, r)
 
     checkSolution(
@@ -66,14 +56,4 @@ if __name__ == "__main__":
             ["0", "0", "0", "0", "0"],
         ],
         expected=1,
-    )
-
-    checkSolution(
-        grid=[
-            ["1", "1", "0", "0", "0"],
-            ["1", "1", "0", "0", "0"],
-            ["0", "0", "1", "0", "0"],
-            ["0", "0", "0", "1", "1"],
-        ],
-        expected=3,
     )
