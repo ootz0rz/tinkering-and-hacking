@@ -21,10 +21,7 @@ class Solution:
         def gen(path: List[int], remainder: int, i: int):
             nonlocal candidates, solutions
 
-            # print(f"gen p={path}, k={remainder}, i={i}")
-
             if remainder == 0:
-                # print(f"gen p={path}, k={remainder}, i={i} -> add: {path}")
                 solutions.append(path)
                 return
 
@@ -34,14 +31,9 @@ class Solution:
             for idx in range(i, len(candidates)):
                 c = candidates[idx]
 
-                # print(
-                #     f"gen p={path}, k={remainder}, i={i}\t idx:{idx} c:{c} of {candidates[i:len(candidates)]}"
-                # )
                 if idx > i and c == candidates[idx - 1]:
                     # this is how we skip subsequent dupes, but make sure we always use up the 'current' candidate
                     # basically, make sure we're not the same as our previous value
-                    #
-                    # print(f"gen p={path}, k={remainder}, i={i}\t -> SKIP {idx}:{c}")
                     continue
 
                 # since candidates is sorted, if the current candidate makes the remainder < 0, no need to process it
@@ -50,13 +42,7 @@ class Solution:
                 if rc < 0:
                     break
 
-                # print(
-                #     f"gen p={path}, k={remainder}, i={i}\t\t Call Gen: {path + [c]}, {rc}, {idx + i + 1}"
-                # )
                 gen(path + [c], rc, idx + 1)
-                # print(
-                #     f"gen p={path}, k={remainder}, i={i}\t\t END Call Gen: {path + [c]}, {rc}, {idx + i + 1}"
-                # )
 
         gen([], target, 0)
 
