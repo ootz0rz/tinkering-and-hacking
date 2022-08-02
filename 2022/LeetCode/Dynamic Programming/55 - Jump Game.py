@@ -9,22 +9,20 @@ class Solution:
 
         N = len(nums)
 
-        def _can_jump_from(idx):
-            nonlocal nums, memo, N
+        memo[N - 1] = True
+        i = N - 2
+        while i >= 0:
+            max_jump = min(i + nums[i], N - 1)
+            j = i + 1
+            while j <= max_jump:
+                if j in memo and memo[j]:
+                    memo[i] = True
+                    break
+                j = j + 1
 
-            if idx == N - 1:
-                return True
+            i = i - 1
 
-            max_jump = min(idx + nums[idx], N - 1)
-            i = max_jump
-            while i > idx:
-                if _can_jump_from(i):
-                    return True
-                i = i - 1
-
-            return False
-
-        return _can_jump_from(0)
+        return 0 in memo and memo[0]
 
 
 if __name__ == "__main__":
