@@ -10,7 +10,7 @@ def _run_solution(
     output_transform_func=None,
     expected_transform_func=None,
 ):
-    print(f"\n\n----- test: {sf.__name__}({', '.join(map(str, args))})")
+    print(f"\n\n----- test: {sf.__name__}({', '.join(map(str, args))}) => {expected}")
     if input_transform_func is not None:
         args = input_transform_func(*args)
 
