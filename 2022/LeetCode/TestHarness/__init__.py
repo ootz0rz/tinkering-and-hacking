@@ -100,3 +100,42 @@ def check_solution_as_sets(
     ), f"Expected no differences, but got {len(diff)}:{diff} vs {len(eset)}:{eset}"
 
     _complete_test()
+
+
+def check_solution_custom(
+    sf,
+    args,
+    expected=None,
+    msg=__BASE_MSG,
+    input_transform_func=None,
+    output_transform_func=None,
+    expected_transform_func=None,
+    custom_compare=None,
+):
+    if custom_compare is None:
+        return check_solution_simple(
+            sf,
+            args,
+            expected,
+            msg,
+            input_transform_func,
+            output_transform_func,
+            expected_transform_func,
+        )
+
+    res = _run_solution(
+        sf,
+        args,
+        expected,
+        msg,
+        input_transform_func,
+        output_transform_func,
+        expected_transform_func,
+    )
+
+    if expected_transform_func is not None:
+        expected = expected_transform_func(expected)
+
+    custom_compare(args, res, expected, msg)
+
+    _complete_test()
