@@ -56,31 +56,20 @@ class Solution:
 
 
 if __name__ == "__main__":
+    # stupid...but works
+    import sys, os
+
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    sys.path.append(os.path.dirname(SCRIPT_DIR))
+
+    from TestHarness import *
+
     s = Solution()
-
-    def checkSolution(nums, expected, msg="Expected `{0}` but got `{1}`"):
-        print(f"\n\n----- nums: {nums}")
-
-        r = s.subsetsWithDup(nums)
-
-        assert len(r) == len(
-            expected
-        ), f"Expected outut len {len(expected)} but got {len(r)}. Expected: {expected} Result: {r}"
-
-        # https://stackoverflow.com/questions/6105777/how-to-compare-a-list-of-lists-sets-in-python
-        rset = set(map(tuple, r))
-        eset = set(map(tuple, expected))
-
-        diff = rset.symmetric_difference(eset)
-
-        print(f"r: {rset} v e: {eset}")
-        assert (
-            len(diff) == 0
-        ), f"Expected no differences, but got {len(diff)}:{diff} vs {len(eset)}:{eset}"
-
-        print("Completed test case.")
-
-    checkSolution(
-        nums=[1, 2, 2],
+    sf = s.subsetsWithDup
+    check_solution_as_sets(
+        sf,
+        args=[[1, 2, 2]],
         expected=[[], [1], [1, 2], [1, 2, 2], [2], [2, 2]],
+        output_set_transform=map_to_tuple_set,
+        expected_set_transform=map_to_tuple_set,
     )
