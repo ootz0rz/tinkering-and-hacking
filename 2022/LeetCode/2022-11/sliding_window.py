@@ -184,3 +184,75 @@ def largest_sum_subarray_len_k(nums, k):
         ans = max(ans, curr)
     
     return ans
+
+### --------------------------------------------------------------------------
+### --------------------------------------------------------------------------
+### --------------------------------------------------------------------------
+### --------------------------------------------------------------------------
+### --------------------------------------------------------------------------
+
+'''
+function fn(arr):
+    curr = some data type to track the window
+
+    // build the first window
+    for i in [0, k - 1]:
+        Do something with curr or other variables to build first window
+
+    ans = answer variable, might be equal to curr here depending on the problem
+    for i in [k, arr.length - 1]:
+        Add arr[i] to window
+        Remove arr[i - k] from window
+        Update ans
+
+    return ans
+'''
+
+# https://leetcode.com/explore/featured/card/leetcodes-interview-crash-course-data-structures-and-algorithms/703/arraystrings/4594/
+def findMaxAverage(nums: List[int], k: int) -> float:
+    curr_avg = 0
+    max_avg = 0
+
+    # build initial subarray
+    for i in range(k):
+        curr_avg = curr_avg + (nums[i] / k)
+
+    max_avg = curr_avg
+    for i in range(k, len(nums)):
+        curr_avg = curr_avg + (nums[i] / k)
+        curr_avg = curr_avg - (nums[i - k] / k)
+
+        max_avg = max(max_avg, curr_avg)
+    
+    return max_avg
+
+'''
+function fn(arr):
+    left = 0
+    for right in [0, arr.length - 1]:
+        Do some logic to "add" element at arr[right] to window
+
+        while left < right AND condition from problem not met:
+            Do some logic to "remove" element at arr[left] from window
+            left++
+
+        Do some logic to update the answer
+'''
+# https://leetcode.com/explore/featured/card/leetcodes-interview-crash-course-data-structures-and-algorithms/703/arraystrings/4595/
+def longestOnes(nums: List[int], k: int) -> int:
+    left = 0
+    cur_z = 0
+    max_len = 0
+
+    for right in range(len(nums)):
+        if nums[right] == 0:
+            cur_z = cur_z + 1
+
+        while cur_z > k:
+            if nums[left] == 0:
+                cur_z = cur_z - 1
+            left = left + 1
+
+        max_len = max(max_len, right - left + 1)
+
+    return max_len
