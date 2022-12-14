@@ -5,7 +5,8 @@ using csharpleetcode.arrays;
 Console.WriteLine("Starting tests...");
 
 var testObjs = new List<Action>() {
-  ReverseStringSolution344.TestSuite,
+  //ReverseStringSolution344.TestSuite,
+  MaxAvgSubarrayI643.TestSuite,
 };
 
 foreach (var t in testObjs) {
@@ -17,3 +18,4 @@ foreach (var t in testObjs) {
 }
 
 Console.WriteLine("Test complete!");
+//Console.ReadLine();
