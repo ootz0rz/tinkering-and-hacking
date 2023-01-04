@@ -1,4 +1,15 @@
-__BASE_MSG = "❌ Expected `{0}` but got `{1}`"
+import os
+import platform
+
+__X__ = "XXX"
+if platform.system() != "Windows":
+    __X__ = "❌"
+
+__CHECK__ = "PASS"
+if platform.system() != "Windows":
+    __CHECK__ = "✅"
+
+__BASE_MSG = __X__ + " Expected `{0}` but got `{1}`"
 
 
 def _run_solution(
@@ -23,7 +34,7 @@ def _run_solution(
 
 
 def _complete_test():
-    print("✅")
+    print(__CHECK__)
 
 
 def map_to_tuple_set(l):
@@ -82,8 +93,10 @@ def check_solution_as_sets(
         expected_transform_func,
     )
 
-    assert len(res) == len(expected), \
-        f"❌ Expected outut len {len(expected)} but got {len(res)}. Expected: {expected} Result: {res}"
+    assert len(res) == len(expected), (
+        __X__
+        + f" Expected outut len {len(expected)} but got {len(res)}. Expected: {expected} Result: {res}"
+    )
 
     # https://stackoverflow.com/questions/6105777/how-to-compare-a-list-of-lists-sets-in-python
     rset = output_set_transform(res)
@@ -94,8 +107,10 @@ def check_solution_as_sets(
     if len(diff) > 0:
         print(f"\t ➡️ result: {rset} v expected: {eset}")
 
-    assert (len(diff) == 0), \
-        f"❌ Expected no differences, but got {len(diff)}:{diff} vs {len(eset)}:{eset}"
+    assert len(diff) == 0, (
+        __X__
+        + f" Expected no differences, but got {len(diff)}:{diff} vs {len(eset)}:{eset}"
+    )
 
     _complete_test()
 
