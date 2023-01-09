@@ -268,45 +268,132 @@ __BALLOON__ = {
 }
 
 
-def _compare_count(base, curr) -> bool:
-    base_sum = 0
-    curr_sum = 0
-
-    for k in base.keys():
-        if k in curr:
-            if curr[k] >= base[k]:
-                curr_sum += base[k]
-
-        base_sum += base[k]
-
-    return base_sum == curr_sum
-
-
 def maxNumberOfBalloons(text: str) -> int:
     from collections import defaultdict
 
-    left = right = 0
-
-    ans = 0
-
     currcount = defaultdict(int)
-    while left <= right and right < len(text):
+    bk = __BALLOON__.keys()
+    for t in text:
+        if t in bk:
+            currcount[t] += 1
 
-        while right < len(text):
-            currcount[text[right]] += 1
-            right += 1
+    ans = 99999999  # big enough since gauranteed 10^4 chars in text at most
+    for k in bk:
+        if not (k in currcount):
+            return 0
 
-            if _compare_count(__BALLOON__, currcount):
-                ans += 1
-                break
-
-        left = right
-        currcount.clear()
+        ans = min(ans, currcount[k] // __BALLOON__[k])
 
     return ans
 
 
+"""
+#given
 check_solution_simple(maxNumberOfBalloons, args=["nlaebolko"], expected=1)
 check_solution_simple(maxNumberOfBalloons, args=["loonbalxballpoon"], expected=2)
 check_solution_simple(maxNumberOfBalloons, args=["leetcode"], expected=0)
 check_solution_simple(maxNumberOfBalloons, args=["baoollnnololgbax"], expected=2)
+check_solution_simple(
+    maxNumberOfBalloons,
+    args=[
+        "krhizmmgmcrecekgyljqkldocicziihtgpqwbticmvuyznragqoyrukzopfmjhjjxemsxmrsxuqmnkrzhgvtgdgtykhcglurvppvcwhrhrjoislonvvglhdciilduvuiebmffaagxerjeewmtcwmhmtwlxtvlbocczlrppmpjbpnifqtlninyzjtmazxdbzwxthpvrfulvrspycqcghuopjirzoeuqhetnbrcdakilzmklxwudxxhwilasbjjhhfgghogqoofsufysmcqeilaivtmfziumjloewbkjvaahsaaggteppqyuoylgpbdwqubaalfwcqrjeycjbbpifjbpigjdnnswocusuprydgrtxuaojeriigwumlovafxnpibjopjfqzrwemoinmptxddgcszmfprdrichjeqcvikynzigleaajcysusqasqadjemgnyvmzmbcfrttrzonwafrnedglhpudovigwvpimttiketopkvqw"
+    ],
+    expected=10,
+)
+"""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# https://leetcode.com/problems/ransom-note/description/
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def canConstruct(ransomNote: str, magazine: str) -> bool:
+    from collections import defaultdict
+
+    counts = defaultdict(int)
+
+    if len(magazine) < len(ransomNote):
+        return False
+
+    for c in magazine:
+        counts[c] = counts[c] + 1
+
+    for r in ransomNote:
+        if (r not in counts) or (counts[r] == 0):
+            return False
+        else:
+            counts[r] = counts[r] - 1
+
+    return True
+
+
+"""
+#given
+check_solution_simple(canConstruct, args=["a", "b"], expected=False)
+check_solution_simple(canConstruct, args=["aa", "ab"], expected=False)
+check_solution_simple(canConstruct, args=["aa", "aab"], expected=True)
+
+#me
+check_solution_simple(canConstruct, args=["aaa", "aa"], expected=False)
+"""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# https://leetcode.com/problems/longest-substring-without-repeating-characters/description/
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def lengthOfLongestSubstring_old(s: str) -> int:
+    from collections import defaultdict
+
+    left = right = ans = cur = 0
+
+    c = defaultdict(int)
+
+    while left <= right and right < len(s):
+        c[left] = c[left] + 1
+        cur = cur + 1
+
+        while c[right] > 1 and left <= right:
+            c[left] = c[left] - 1
+            if c[left] == 0:
+                del c[left]
+
+            cur = cur - 1
+            left = left + 1
+
+        ans = max(ans, cur)
+
+        right = right + 1
+
+    return ans
+
+
+def lengthOfLongestSubstring(s: str) -> int:
+    from collections import defaultdict
+
+    left = ans = cur = 0
+
+    c = defaultdict(int)
+
+    for ridx in range(len(s)):
+        c[s[ridx]] += 1
+
+        cur = cur + 1
+
+        while c[s[ridx]] >= 2:
+            c[s[left]] -= 1
+            if c[s[left]] == 0:
+                del c[s[left]]
+
+            left = left + 1
+
+            cur = cur - 1
+
+        ans = max(ans, cur)
+
+    return ans
+
+
+check_solution_simple(lengthOfLongestSubstring, args=["abcabcbb"], expected=3)
+check_solution_simple(lengthOfLongestSubstring, args=["bbbbb"], expected=1)
+check_solution_simple(lengthOfLongestSubstring, args=["pwwkew"], expected=3)
