@@ -128,6 +128,42 @@ def zigzagLevelOrder(root: Optional[TreeNode]) -> List[List[int]]:
     return ans
 
 
+'''
 # given
 t1 = tree_from_binary_array([3, 9, 20, None, None, 15, 7])
 check_solution_simple(zigzagLevelOrder, args=[t1], expected=[[3], [20, 9], [15, 7]])
+'''
+
+# ----------------------------------------------------------------------------------------------------------------------
+# https://leetcode.com/problems/closest-binary-search-tree-value/description/
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def closestValue(self, root: Optional[TreeNode], target: float) -> int:
+    if root is None:
+        return None
+
+    # note: in hindsight... could also just do a while loop here
+    # where we just keep a 'node' or reuse root, and just go left/right as appropriate 
+    #
+    # we could also recalc the delta each time we need to make the comparison instead of storing it
+    def _search(node, closest, delta, t):
+        if node is None:
+            return closest
+
+        new_delta = node.val - t
+        if abs(new_delta) < abs(delta):
+            closest = node.val
+            delta = new_delta
+        
+        if delta == 0:
+            return closest
+
+        if target < node.val: 
+            return _search(node.left, closest, delta, t)
+        else:
+            return _search(node.right, closest, delta, t)
+
+    return _search(root, root.val, root.val - target, target)
+
+    
