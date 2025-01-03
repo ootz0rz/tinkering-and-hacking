@@ -19,22 +19,22 @@ from collections import OrderedDict
 from collections import deque
 from collections import Counter
 
+# https://leetcode.com/problems/concatenation-of-array/description/
 class Solution:
-    # https://leetcode.com/problems/remove-element/description/
-    def removeElement(self, nums: List[int], val: int) -> int:
-        l = len(nums)
+    def getConcatenation(self, nums: List[int]) -> List[int]:
+        L = len(nums)
 
-        if l == 0:
-            return 0
+        arr = [0] * (L*2)
         
-        left = 0
+        i = 0
+        j = L
 
-        for right in range(len(nums)):
-            if nums[right] != val:
-                nums[left] = nums[right]
-                left = left + 1
+        while i < L:
+            arr[i] = arr[j] = nums[i]
+            i = i + 1
+            j = j + 1
         
-        return left
+        return arr
 
 if __name__ == '__main__':
     # stupid...but works
@@ -46,16 +46,4 @@ if __name__ == '__main__':
     from TestHarness import *
 
     s = Solution()
-    sf = s.removeElement
-
-    check_solution_simple(
-        sf,
-        args=[[3,2,2,3], 3],
-        expected=2
-    )
-
-    check_solution_simple(
-        sf,
-        args=[[0,1,2,2,3,0,4,2], 2],
-        expected=5
-    )
+    sf = s.getConcatenation

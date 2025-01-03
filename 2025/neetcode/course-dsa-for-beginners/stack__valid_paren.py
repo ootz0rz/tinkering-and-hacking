@@ -19,22 +19,33 @@ from collections import OrderedDict
 from collections import deque
 from collections import Counter
 
+pairings = {
+    ')' : '(',
+
+    '}' : '{',
+
+    ']' : '[',
+}
+
 class Solution:
-    # https://leetcode.com/problems/remove-element/description/
-    def removeElement(self, nums: List[int], val: int) -> int:
-        l = len(nums)
-
-        if l == 0:
-            return 0
+    def isValid(self, s: str) -> bool:
+        if len(s) < 2:
+            return False
         
-        left = 0
+        stack = []
 
-        for right in range(len(nums)):
-            if nums[right] != val:
-                nums[left] = nums[right]
-                left = left + 1
-        
-        return left
+        for e in s:
+            if not (e in pairings):
+                stack.append(e)
+            elif len(stack) == 0:
+                return False
+            else:
+                if stack[-1] == pairings[e]:
+                    stack.pop()
+                else:
+                    return False
+
+        return len(stack) == 0
 
 if __name__ == '__main__':
     # stupid...but works
@@ -46,16 +57,4 @@ if __name__ == '__main__':
     from TestHarness import *
 
     s = Solution()
-    sf = s.removeElement
-
-    check_solution_simple(
-        sf,
-        args=[[3,2,2,3], 3],
-        expected=2
-    )
-
-    check_solution_simple(
-        sf,
-        args=[[0,1,2,2,3,0,4,2], 2],
-        expected=5
-    )
+    sf = s.isValid

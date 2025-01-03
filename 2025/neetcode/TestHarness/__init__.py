@@ -43,10 +43,8 @@ def map_to_tuple_set(l):
 def map_to_set_frozenset(l):
     return set(map(frozenset, l))
 
-
 def map_to_set(l):
     return set(l)
-
 
 def check_solution_simple(
     sf,
@@ -73,6 +71,8 @@ def check_solution_simple(
     assert res == expected, msg.format(expected, res)
 
     _complete_test()
+
+    return res
 
 def check_solution_as_frozensets(
     *args, **kwargs
@@ -126,6 +126,8 @@ def check_solution_as_sets(
 
     _complete_test()
 
+    return res
+
 
 def check_solution_custom(
     sf,
@@ -164,3 +166,5 @@ def check_solution_custom(
     custom_compare(args, res, expected, msg)
 
     _complete_test()
+
+    return res
