@@ -25,17 +25,17 @@ https://neetcode.io/problems/longest-consecutive-sequence
 
 class Solution:
     def longestConsecutive(self, nums: List[int]) -> int:
-        numSet = set(nums)
+        exists = set(nums)
         longest = 0
 
-        for e in nums:
-            if (e - 1) in numSet:
+        for e in exists:
+            if (e - 1) in exists:
                 # skip since we're not the potential start of a sequence
                 continue
             
             # check rest of sequence
             l = 1
-            while (e + l) in numSet:
+            while (e + l) in exists:
                 l = l + 1
             
             longest = max(l, longest)
