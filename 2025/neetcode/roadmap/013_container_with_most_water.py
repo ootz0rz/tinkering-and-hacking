@@ -57,18 +57,24 @@ if __name__ == '__main__':
 
     check_solution_simple(
         sf,
-        args=[[0,0,0]],
-        expected=[[0,0,0]]
+        args=[[1,1]],
+        expected=1
     )
 
     check_solution_simple(
         sf,
-        args=[[0,1,1]],
-        expected=[]
+        args=[[1,7,2,5,4,7,3,6]],
+        expected=36
     )
 
     check_solution_simple(
         sf,
-        args=[[-1,0,1,2,-1,-4]],
-        expected=[[-1,-1,2],[-1,0,1]]
+        args=[[2,2,2]],
+        expected=4
+    )
+
+    check_solution_simple(
+        sf,
+        args=[[1,8,6,2,5,4,8,3,7]],
+        expected=49
     )
