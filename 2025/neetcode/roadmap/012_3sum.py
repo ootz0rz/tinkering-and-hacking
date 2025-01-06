@@ -30,14 +30,10 @@ class Solution:
 
         # sort first nlogn
         nums.sort()
-        
-        seen = set()
 
         res = []
 
-        for cidx in range(L):
-            e = nums[cidx]
-
+        for cidx, e in enumerate(nums):
             if e > 0:
                 # we can't sum positive-only numbers to 0, so we can skip this part of the array onwards
                 break
