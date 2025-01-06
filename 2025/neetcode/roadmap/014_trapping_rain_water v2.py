@@ -35,23 +35,33 @@ class Solution:
         if L == 0:
             return 0
 
-        prefix = [0] * L
-        postfix = [0] * L
+        leftMax = 0
+        rightMax = 0
+        allWater = 0
 
-        maxWater = 0
+        i = 0
+        j = L - 1
 
-        # build prefix max height for each i
-        for i in range(1, L):
-            prefix[i] = max(prefix[i - 1], height[i - 1])
+        while i < j:
+            hi = height[i]
+            hj = height[j]
 
-        for i in range(L - 2, -1, -1):
-            postfix[i] = max(postfix[i + 1], height[i + 1])
+            if hi <= hj:
+                if hi >= leftMax:
+                    leftMax = hi
+                else:
+                    allWater += leftMax - hi
 
-        # for each i, check how much water we can store and add it all together
-        for idx in range(L):
-            maxWater += max(0, min(prefix[idx], postfix[idx]) - height[idx])
+                i = i + 1
+            else: # hi > hj
+                if hj >= rightMax:
+                    rightMax = hj
+                else:
+                    allWater += rightMax - hj
+                
+                j = j - 1
 
-        return maxWater
+        return allWater
 
 if __name__ == '__main__':
     # stupid...but works
