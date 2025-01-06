@@ -84,6 +84,16 @@ def check_solution_as_frozensets(
         expected_set_transform=map_to_set_frozenset
     )
 
+def check_solution_as_tuplesets(
+    *args, **kwargs
+):
+    return check_solution_as_sets(
+        *args, 
+        **kwargs,
+        output_set_transform=map_to_tuple_set,
+        expected_set_transform=map_to_tuple_set
+    )
+
 def check_solution_as_sets(
     sf,
     args,
