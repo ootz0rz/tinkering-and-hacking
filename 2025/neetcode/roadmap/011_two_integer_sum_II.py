@@ -26,8 +26,6 @@ Since sorted, we can start on either end of the array i=0, j=n-1...and then depe
 
 We can also make sure i strictly < j to keep two independent vals.
 
-If we really wanted, could binary search this too... 
-
 NOTE NOTE NOTE: Result should be 1-indexed... derp
 '''
 class Solution:
