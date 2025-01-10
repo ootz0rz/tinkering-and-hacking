@@ -20,7 +20,7 @@ from collections import deque
 from collections import Counter
 
 # https://neetcode.io/problems/generate-parentheses
-# 
+# https://leetcode.com/problems/generate-parentheses/description/
 
 class Solution:
     def generateParenthesis(self, n: int) -> List[str]:
