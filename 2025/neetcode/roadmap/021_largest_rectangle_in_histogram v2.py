@@ -92,7 +92,7 @@ class Solution:
         # and track the largest one
         maxArea = 0
         for i, h in enumerate(heights):
-            area = (leftBorder[i] * h) + (rightBorder[i] * h) - h
+            # area = (leftBorder[i] * h) + (rightBorder[i] * h) - h
             area = h * (leftBorder[i] + rightBorder[i] - 1)
 
             print(f"area: {area} > maxArea: {maxArea}")
