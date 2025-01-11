@@ -25,79 +25,37 @@ from collections import Counter
 class Solution:
     def largestRectangleArea(self, heights: List[int]) -> int:
         n = len(heights)
+        stack = [] # (idx, height)
 
-        rightBorder = [0] * n # num of blocks we can extend to the right, including ourselves
-        leftBorder = [0] * n # ditto, to left
-
-        # generate right borders
-        stack = []
-        for i in range(n - 1, -1, -1):
-            h = heights[i]
-
-            print(f"[0] height[{i}]: {h} -- {stack}")
-
-            while stack and h <= stack[-1][0]:
-                print(f"\t h:{h} < {stack[-1][0]}")
-                sh, si = stack.pop()
-
-            print(f"[1] height[{i}]: {h} -- {stack}")
-
-            if len(stack) == 0:
-                # we can go towards the end of the array
-                rightBorder[i] = n - i
-                print(f"\t -> END rightBorder[{i}] = {rightBorder[i]}")
-            else:
-                # we can only go up to the last element in stack
-                rightBorder[i] = stack[-1][1] - i
-                print(f"\t -> CALC rightBorder[{i}] = {rightBorder[i]}")
-            
-            # add ourselves and move on
-            stack.append((h, i))
-        
-        print("Right Border: ", rightBorder)
-
-        print()
-        print("-" * 10)
-        print()
-
-        # generate left borders
-        stack = []
-        for i in range(n):
-            h = heights[i]
-
-            print("")
-            print(f"[0] height[{i}]: {h} -- {stack}")
-
-            while stack and h <= stack[-1][0]:
-                print(f"\t h:{h} < {stack[-1][0]}")
-                sh, si = stack.pop()
-
-            print(f"[1] height[{i}]: {h} -- {stack}")
-
-            if len(stack) == 0:
-                # we can go towards the beginning of the array
-                leftBorder[i] = i + 1
-                print(f"\t -> END leftBorder[{i}] = {leftBorder[i]}")
-            else:
-                # we can only go up to the last element in stack
-                leftBorder[i] = i - stack[-1][1]
-                print(f"\t -> CALC leftBorder[{i}] = {leftBorder[i]}")
-            
-            # add ourselves and move on
-            stack.append((h, i))
-        
-        print("Left Border: ", leftBorder)
-
-        # finally do one last pass, where we calculate the total possible area at any given index
-        # and track the largest one
         maxArea = 0
+        
         for i, h in enumerate(heights):
-            # area = (leftBorder[i] * h) + (rightBorder[i] * h) - h
-            area = h * (leftBorder[i] + rightBorder[i] - 1)
+            
+            si, sh = i, h
 
-            print(f"area: {area} > maxArea: {maxArea}")
+            while stack and h < stack[-1][1]:
+                # our current height is less than the top of stack, so we pop it and calculate it's area
+                # we know that by virtue of having its value in the stack, it can't extend to the left,
+                # it can only extend up to our current index
+                si, sh = stack.pop()
+                
+                area = sh * (i - si)
 
-            maxArea = max(maxArea, area)
+                maxArea = max(area, maxArea)
+
+            # note that we set the "start" index of this new height as the last value we popped out
+            # because we know that h is strictly smaller than that value, so it can be extended back
+            # as far as that popped values' index
+            #
+            # if the stack was empty, si = i
+            stack.append((si, h))
+
+        # finally process any remaining items in stack
+        # 
+        # we already set their "start" indices here as far back as they can go, so we just need to
+        # calc their area by extending to the end of the histogram
+        for (si, sh) in stack:
+            maxArea = max(maxArea, sh * (n - si))
 
         return maxArea
 
@@ -113,6 +71,24 @@ if __name__ == '__main__':
 
     s = Solution()
     sf = s.largestRectangleArea
+
+    check_solution_simple(
+        sf,
+        args=[[4]],
+        expected=4
+    )
+
+    check_solution_simple(
+        sf,
+        args=[[2,1]],
+        expected=2
+    )
+
+    check_solution_simple(
+        sf,
+        args=[[1,2]],
+        expected=2
+    )
 
     check_solution_simple(
         sf,
