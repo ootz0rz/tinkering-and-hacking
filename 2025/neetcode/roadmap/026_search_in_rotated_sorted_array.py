@@ -22,6 +22,9 @@ from collections import Counter
 # https://neetcode.io/problems/find-target-in-rotated-sorted-array
 
 class Solution:
+    '''
+    We can find the min value, and then treat it as 2 diff parts to binary search
+    '''
     def search(self, nums: List[int], target: int) -> int:
         left = 0
         right = len(nums) - 1
@@ -32,7 +35,50 @@ class Solution:
             em = nums[mid]
             er = nums[right]
 
-        return left
+            # some early exits
+            if em == target:
+                return mid
+            
+            if er == target:
+                return right
+            
+            if nums[left] == target:
+                return left
+
+            # continue search
+            if em < er:
+                # discard right side
+                right = mid
+            else:
+                # discard left side
+                left = mid + 1
+
+        # nums[left] => min value
+
+        # decide which half we should search within
+        if nums[0] <= target <= nums[left]:
+            # search left
+            right = left
+            left = 0
+        else:
+            # search right
+            right = len(nums) - 1
+
+        while left <= right:
+            mid = left + ((right - left) // 2)
+
+            if nums[mid] == target:
+                return mid
+        
+            if nums[mid] > target:
+                # discard right
+                right = mid - 1
+            else:
+                # discard left
+                left = mid + 1
+
+        return -1
+        
 
 
 if __name__ == '__main__':
