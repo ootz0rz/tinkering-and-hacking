@@ -24,8 +24,8 @@ from collections import Counter
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:        
         minBuyPrice = prices[0]
-
         maxProfit = 0
+        
         for sellPrice in prices:
             maxProfit = max(maxProfit, sellPrice - minBuyPrice)
             minBuyPrice = min(minBuyPrice, sellPrice)
