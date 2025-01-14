@@ -44,7 +44,7 @@ class Solution:
         totalMatchesNeeded = len(s1freq)
 
         s2freq = {} # Also bounded O(26)
-        for j in range(len(s2)):
+        while i <= j and j < len(s2):
             cj = s2[j]
 
             # if we encounter an unwanted letter, we know it's not gonna be part of our substring, so just skip the mess
@@ -57,21 +57,22 @@ class Solution:
 
             s2freq[cj] = 1 + s2freq.get(cj, 0)
 
-            while (cj in s2freq) and (s2freq[cj] > s1freq[cj]):
-                ci = s2[i]
-
-                if ci in s2freq and ci in s1freq and s2freq[ci] == s1freq[ci]:
-                    curMatches = curMatches - 1
-
-                s2freq[ci] = max(0, s2freq.get(ci, 0) - 1)
-                i = i + 1
-                # dec curCount here?? 
-
-            if s2freq[cj] == s2freq[cj]:
+            if s2freq[cj] == s1freq[cj]:
                 curMatches += 1
 
-                if curMatches == totalMatchesNeeded:
-                    return True
+            elif s2freq[cj] == s1freq[cj] + 1:
+                while s2freq[cj] > s1freq[cj]:
+                    ci = s2[i]
+
+                    if ci in s2freq and s2freq[ci] == s1freq[ci]:
+                        curMatches -= 1
+                    
+                    s2freq[ci] = max(0, s2freq.get(ci, 0) - 1)
+
+                    i = i + 1
+
+            if curMatches == totalMatchesNeeded:
+                return True
 
             j = j + 1
 
@@ -102,5 +103,9 @@ if __name__ == '__main__':
         expected=False
     )
 
-
+    check_solution_simple(
+        sf,
+        args=["adc", "dcda"],
+        expected=True
+    )
     
