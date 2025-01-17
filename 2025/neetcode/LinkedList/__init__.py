@@ -8,6 +8,9 @@ class ListNode:
     
     def __str__(self):
         return self.__repr__()
+    
+    def __all__(self):
+        return f"{self.val} -> {self.next if self.next is None else self.next.__all__()}"
 
 def LN__ARRAY_TO_LL(arr=[], index=-1):
     if len(arr) == 0:
