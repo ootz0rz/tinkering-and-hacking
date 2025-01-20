@@ -38,12 +38,12 @@ If we encounter it again and its already negative, we know its a dupe
 class Solution:
     def findDuplicate(self, nums: List[int]) -> int:
         for e in nums:
-            idx = abs(e) - 1
+            idx = abs(e) - 1 # turn into 0-based index
 
             if nums[idx] < 0:
-                return abs(e)
+                return idx # already visited this idx
             
-            nums[idx] *= -1
+            nums[idx] *= -1 # mark visited
         return -1
 
 
