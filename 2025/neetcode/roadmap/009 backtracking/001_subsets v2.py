@@ -22,20 +22,17 @@ from collections import Counter
 # https://neetcode.io/problems/subsets
 
 class Solution:
-    def subsets(self, nums: List[int]) -> List[List[int]]:
-        
-        subs = []
+    def subsets(self, nums: List[int]) -> List[List[int]]:       
+        subs = [[]] #key: have to seed with empty set
         n = len(nums)
 
-        def gen(start, path):
-            nonlocal subs
+        for num in nums:
+            r = []
 
-            subs.append(path)
+            for s in subs:
+                r.append(s + [num])
 
-            for i in range(start, n):
-                gen(i + 1, path + [nums[i]])
-
-        gen(0, [])
+            subs.extend(r) 
 
         return subs
         

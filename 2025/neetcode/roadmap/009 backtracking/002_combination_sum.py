@@ -19,26 +19,33 @@ from collections import OrderedDict
 from collections import deque
 from collections import Counter
 
-# https://neetcode.io/problems/subsets
+# https://neetcode.io/problems/combination-target-sum
 
 class Solution:
-    def subsets(self, nums: List[int]) -> List[List[int]]:
+    # kinda works, but returns dupes... i.e all permutations not combinations
+    def combinationSum(self, nums: List[int], target: int) -> List[List[int]]:
         
-        subs = []
-        n = len(nums)
+        res = []
 
-        def gen(start, path):
-            nonlocal subs
+        def find(sum, path):
+            nonlocal res
 
-            subs.append(path)
+            for n in nums:
 
-            for i in range(start, n):
-                gen(i + 1, path + [nums[i]])
+                if n > target:
+                    continue
+                
+                sn = sum + n 
 
-        gen(0, [])
-
-        return subs
+                if sn == target:
+                    res.append(path + [n])
+                    
+                elif sn < target:
+                    find(sn, path + [n])
         
+        find(0, [])
+
+        return res 
 
 if __name__ == '__main__':
     # stupid...but works
@@ -51,28 +58,18 @@ if __name__ == '__main__':
     from TestHarness import *
 
     s = Solution()
-    sf = s.subsets
+    sf = s.combinationSum
 
     check_solution_as_frozensets(
         sf,
-        args=[[]],
-        expected=[[]]
+        args=[[3], 5],
+        expected=[]
     )
 
     check_solution_as_frozensets(
         sf,
-        args=[[0]],
-        expected=[[], [0]]
+        args=[[2,5,6,9], 9],
+        expected=[[2,2,5], [9]]
     )
 
-    check_solution_as_frozensets(
-        sf,
-        args=[[0,1]],
-        expected=[[], [0], [1], [0,1]]
-    )
 
-    check_solution_as_frozensets(
-        sf,
-        args=[[1,2,3]],
-        expected=[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
-    )    
