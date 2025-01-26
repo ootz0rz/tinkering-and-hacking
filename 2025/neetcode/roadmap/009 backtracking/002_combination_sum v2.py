@@ -22,28 +22,9 @@ from collections import Counter
 # https://neetcode.io/problems/combination-target-sum
 
 class Solution:
-    # kinda works, but returns dupes... i.e all permutations not combinations
     def combinationSum(self, nums: List[int], target: int) -> List[List[int]]:
-        
         res = []
-
-        # def find(sum, path):
-        #     nonlocal res
-
-        #     for n in nums:
-
-        #         if n > target:
-        #             return
-                
-        #         sn = sum + n 
-
-        #         if sn == target:
-        #             res.append(path + [n])
-                    
-        #         elif sn < target:
-        #             find(sn, path + [n])
-        
-        # find(0, [])
+        nums.sort() # sorting is important here... since we assume we can end early on line 41!!
 
         n = len(nums)
         def find(idx, path, sum):
@@ -58,7 +39,7 @@ class Solution:
 
                 sumj = sum + je
                 if sumj > target:
-                    return
+                    return # would have to change this to 'continue' if we didn't sort first
                 
                 find(j, path + [je], sumj)
 
