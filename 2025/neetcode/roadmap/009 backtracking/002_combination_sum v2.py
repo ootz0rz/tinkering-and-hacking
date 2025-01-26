@@ -27,23 +27,42 @@ class Solution:
         
         res = []
 
-        def find(sum, path):
+        # def find(sum, path):
+        #     nonlocal res
+
+        #     for n in nums:
+
+        #         if n > target:
+        #             return
+                
+        #         sn = sum + n 
+
+        #         if sn == target:
+        #             res.append(path + [n])
+                    
+        #         elif sn < target:
+        #             find(sn, path + [n])
+        
+        # find(0, [])
+
+        n = len(nums)
+        def find(idx, path, sum):
             nonlocal res
 
-            for n in nums:
+            if sum == target:
+                res.append(path)
+                return
+            
+            for j in range(idx, n):
+                je = nums[j]
 
-                if n > target:
+                sumj = sum + je
+                if sumj > target:
                     return
                 
-                sn = sum + n 
+                find(j, path + [je], sumj)
 
-                if sn == target:
-                    res.append(path + [n])
-                    
-                elif sn < target:
-                    find(sn, path + [n])
-        
-        find(0, [])
+        find(0, [], 0)
 
         return res 
 
