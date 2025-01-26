@@ -40,7 +40,7 @@ class Solution:
                     res.append(path + [n])
                     
                 elif sn < target:
-                    find(sn, path + [n], i)
+                    find(sn, path + [n], i) # derp just needed to follow first instinct to not iterate entire list...and just self + rest...by adding idx val here we avoid dupes and do combinations instead of permutations
         
         find(0, [], 0)
 
