@@ -36,6 +36,12 @@ _TREASURE = 0
 # DFS gets into an infinite loop here...
 # we could maintain a grid of "visited" tiles to prevent this
 # but the time complexity ends up being massive here
+# 
+# this is because in the worst case we still have to revisit "visited" tiles
+# to update with a smaller depth value, when we reach another treasure that 
+# was closer for that tile
+#
+# that is, the visited grid is for each treasure iteration via backtracking
 class Solution:
     def islandsAndTreasure(self, grid: List[List[int]]) -> None:
         global _DIR, _LAND, _WATER, _TREASURE
