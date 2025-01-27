@@ -19,7 +19,7 @@ from collections import OrderedDict
 from collections import deque
 from collections import Counter
 
-# https://neetcode.io/problems/count-number-of-islands
+# https://neetcode.io/problems/islands-and-treasure
 
 # valid directions
 _DIR = [
@@ -29,50 +29,55 @@ _DIR = [
     [0, 1],
 ]
 
-_LAND = 1
-_WATER = 0
+_LAND = 2147483647
+_WATER = -1
+_TREASURE = 0
 
+# DFS gets into an infinite loop here...
+# we could maintain a grid of "visited" tiles to prevent this
+# but the time complexity ends up being massive here
 class Solution:
-    def maxAreaOfIsland(self, grid: List[List[str]]) -> int:
-        global _DIR, _LAND, _WATER
-        
-        maxArea = 0
+    def islandsAndTreasure(self, grid: List[List[int]]) -> None:
+        global _DIR, _LAND, _WATER, _TREASURE
 
         nr = len(grid)
         nc = len(grid[0])
 
-        # search all positions around ourselves and mark them as
-        # water
-        def find_and_mark(r, c, area):
+        def mark(r, c, depth):
             nonlocal grid
 
+            # check bounds
             if r < 0 or r >= nr or c < 0 or c >= nc:
-                return area
+                return 
             
-            # print(f"\tfind and mark: r:{r} c:{c} => {grid[r][c]} -- {grid}")
-            if grid[r][c] == _WATER:
-                return area
+            # skip water
+            g = grid[r][c]
+            if g == _WATER:
+                return 
             
-            grid[r][c] = _WATER
-            area = area + 1
+            # mark depth
+            grid[r][c] = min(g, depth)
+
+            print(f"\t grid[{r}][{c}] = {grid[r][c]}")
+
+            # mark neighbors as appropriate
             for x, y in _DIR:
                 rx = r + x
                 cy = c + y
 
-                area = max(area, find_and_mark(rx, cy, area))
-            
-            return area
+                mark(rx, cy, depth + 1)
 
         for ridx, row in enumerate(grid):
             for cidx, cell in enumerate(row):
-                # skip water
-                if cell == _WATER: 
+                if cell != _TREASURE:
                     continue
                 
-                # find extents of the land here
-                maxArea = max(maxArea, find_and_mark(ridx, cidx, 0))
+                # dfs from each Treasure
+                print(f"Found treasure: {ridx},{cidx}")
+                mark(ridx, cidx, 0)
 
-        return maxArea
+        return grid
+
 
 if __name__ == '__main__':
     # stupid...but works
@@ -85,16 +90,16 @@ if __name__ == '__main__':
     from TestHarness import *
 
     s = Solution()
-    sf = s.maxAreaOfIsland
+    sf = s.islandsAndTreasure
 
     grid = [
-        [0,1,1,0,1],
-        [1,0,1,0,1],
-        [0,1,1,0,1],
-        [0,1,0,0,1]
+        [2147483647,-1,0,2147483647],
+        [2147483647,2147483647,2147483647,-1],
+        [2147483647,-1,2147483647,-1],
+        [0,-1,2147483647,2147483647]
     ]
     check_solution_simple(  
         sf,
         args=[grid],
-        expected=6
+        expected=grid
     )
