@@ -117,14 +117,9 @@ if __name__ == '__main__':
     s = Solution()
     sf = s.islandsAndTreasure
 
-    grid = [
-        [2147483647,-1,0,2147483647],
-        [2147483647,2147483647,2147483647,-1],
-        [2147483647,-1,2147483647,-1],
-        [0,-1,2147483647,2147483647]
-    ]
+    grid = [[1,1,0],[0,1,1],[0,1,2]]
     check_solution_simple(  
         sf,
         args=[grid],
-        expected=grid
+        expected=4
     )
