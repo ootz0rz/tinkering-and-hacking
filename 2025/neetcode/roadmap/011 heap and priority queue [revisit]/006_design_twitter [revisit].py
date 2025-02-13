@@ -57,7 +57,7 @@ class Twitter:
 
             # add to our minHeap
             # minHeap.append((time, tweetid, u, n - 1))
-            heapq.heappush(minHeap, (time, tweetid, u, n - 1))
+            heapq.heappush(minHeap, (time, tweetid, u, n - 1)) # NOTE turns out if the list is empty, don't need to heapify. That just heapifys existing elements!
 
         # now we begin processing the heap
         # heapq.heapify(minHeap)
