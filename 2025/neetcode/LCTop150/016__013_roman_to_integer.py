@@ -28,7 +28,7 @@ class Solution:
             else:
                 total += valMap[e]
 
-            print(f"e: {e} -> total: {total}")
+            #print(f"e: {e} -> total: {total}")
 
             i += 1
 
