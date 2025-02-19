@@ -19,27 +19,11 @@ from collections import OrderedDict
 from collections import deque
 from collections import Counter
 
-# https://leetcode.com/problems/longest-substring-without-repeating-characters/?envType=study-plan-v2&envId=top-interview-150
+# https://leetcode.com/problems/minimum-window-substring/?envType=study-plan-v2&envId=top-interview-150
 class Solution:
-    def lengthOfLongestSubstring(self, s: str) -> int:
-        l = 0
-        maxLen = 0
-
-        curLen = 0
-        seen = set()
-        for r, re in enumerate(s):
-
-            while re in seen and l <= r:
-                seen.remove(s[l])
-                l += 1
-                curLen -= 1
-
-            seen.add(re)
-            curLen += 1
-
-            maxLen = max(maxLen, curLen)
+    def minWindow(self, s: str, t: str) -> str:
         
-        return maxLen
+        pass
 
 
 if __name__ == '__main__':
