@@ -34,7 +34,7 @@ class Solution:
 
         for e in s:
             if e in CLOSING_PAIRS:
-                if stk[-1] == CLOSING_PAIRS[e]:
+                if len(stk) > 0 and stk[-1] == CLOSING_PAIRS[e]:
                     stk.pop()
                     continue
                 else:

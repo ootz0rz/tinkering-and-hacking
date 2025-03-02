@@ -12,6 +12,12 @@ class ListNode:
     def __all__(self):
         return f"{self.val} -> {self.next if self.next is None else self.next.__all__()}"
 
+class RandomNode:
+    def __init__(self, x: int, next: 'RandomNode' = None, random: 'RandomNode' = None):
+        self.val = int(x)
+        self.next = next
+        self.random = random
+
 def LN__ARRAY_TO_LL(arr=[], index=-1):
     if len(arr) == 0:
         return None
