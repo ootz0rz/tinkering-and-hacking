@@ -29,30 +29,40 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from LinkedList import *
 # ------------ ListNode
 
-# https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/?envType=study-plan-v2&envId=top-interview-150
+# https://leetcode.com/problems/rotate-list/?envType=study-plan-v2&envId=top-interview-150
 class Solution:
-    def deleteDuplicates(self, head: Optional[ListNode]) -> Optional[ListNode]:
+    def rotateRight(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        # since k can be stupid large, makes sense for us to bound it to n = size of LL
         if not head:
             return head
         
-        head = ListNode(-200, head) # create dummy head
+        # get length of LL
+        n = 1
+        p = head
+        while p.next:
+            n += 1
+            p = p.next
 
-        i = head.next
-        j = head.next.next
+        # if we're just an element of 1, nothing to do
+        if n <= 1:
+            return head
+        
+        print(f"Size of list: {n}, k: {k} => {k % n}")
+        print(f"p: {p} head: {head}")
 
-        while j:
-            # forward j through any duplicates
-            while j and i and i.val == j.val:
-                j = j.next 
+        # once we get here, p is the end and head is the start
+        #
+        # so we need to traverse to newHead which will be k%n 
+        # from the end of the list
+        #
+        # that then becomes the new head, and we continue to
+        # traverse to the end to attach the previous head there
+        # and finally we make sure that whatever is before newHead
+        # has its next value set to None
+        newHead = None
+        
 
-            # by the time we get here, i is the first occurrence of the duplicates
-            # and j is the element after the duplicates end
-            i.next = j
-            i = j
-            if j:
-                j = j.next
-
-        return head.next
+        return newHead
 
 if __name__ == '__main__':
     # stupid...but works
@@ -64,11 +74,11 @@ if __name__ == '__main__':
     from TestHarness import *
 
     s = Solution()
-    sf = s.deleteDuplicates
+    sf = s.rotateRight
 
     check_solution_simple(
         sf,
-        args=[[]],
+        args=[[], 0],
         expected=[],
         input_transform_func=TEST__ARRAY_TO_LL_AS_ARGS,
         output_transform_func=LN__LL_TO_ARRAY,
@@ -76,7 +86,7 @@ if __name__ == '__main__':
 
     check_solution_simple(
         sf,
-        args=[[1]],
+        args=[[1], 5],
         expected=[1],
         input_transform_func=TEST__ARRAY_TO_LL_AS_ARGS,
         output_transform_func=LN__LL_TO_ARRAY,
@@ -84,24 +94,24 @@ if __name__ == '__main__':
 
     check_solution_simple(
         sf,
-        args=[[1,1]],
-        expected=[1],
+        args=[[1,2], 3],
+        expected=[2,1],
         input_transform_func=TEST__ARRAY_TO_LL_AS_ARGS,
         output_transform_func=LN__LL_TO_ARRAY,
     )
 
     check_solution_simple(
         sf,
-        args=[[1,1,1,1,1]],
-        expected=[1],
+        args=[[1,2,3], 1],
+        expected=[2,3,1],
         input_transform_func=TEST__ARRAY_TO_LL_AS_ARGS,
         output_transform_func=LN__LL_TO_ARRAY,
     )
 
     check_solution_simple(
         sf,
-        args=[[1,1,1,1,1,2,3,3,3,5,5]],
-        expected=[1,2,3,5],
+        args=[[1,2,3,4,5], 2],
+        expected=[4,5,1,2,3],
         input_transform_func=TEST__ARRAY_TO_LL_AS_ARGS,
         output_transform_func=LN__LL_TO_ARRAY,
     )
