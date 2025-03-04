@@ -50,12 +50,23 @@ left, right, root
 class Solution:
     def buildTree(self, inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
         
+        postIdx = len(postorder) - 1
+
+        # the trick here is that since we're given post-order, we keep 
+        # building the right-most subtree first as long as possible,
+        # so that way we can simply pop/traverse one element at a time;
+        # from the end to beginning of postorder to get our root element
+        # at each stage
         def build(ino):
-            nonlocal postorder
+            nonlocal postIdx
             if len(ino) == 0 or len(postorder) == 0:
                 return None
             
-            rv = postorder.pop()
+            # instead of popping, we can track idx
+            #rv = postorder.pop()
+            rv = postorder[postIdx]
+            postIdx -= 1
+
             root = TreeNode(rv)
 
             # find rv in ino
@@ -71,7 +82,7 @@ class Solution:
 
             return root
 
-        build(inorder)
+        return build(inorder)
 
 
 if __name__ == '__main__':
