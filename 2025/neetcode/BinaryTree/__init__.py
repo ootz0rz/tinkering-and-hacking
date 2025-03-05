@@ -1,3 +1,5 @@
+from typing import List, Optional, Self
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
@@ -12,9 +14,9 @@ class TreeNode:
         return self.__repr__()
     
     def __all__(self):
-        return f"V: {self.val} L: {self.left if self.left is None else self.left.__all__()} R: {self.right if self.right is None else self.right.__all__()}"
+        return f"[V: {self.val} L: {self.left if self.left is None else self.left.__all__()} R: {self.right if self.right is None else self.right.__all__()}]"
 
-def GEN_TREE_FROM_LIST(L):
+def GEN_TREE_FROM_LIST(L:List) -> "TreeNode":
     n = len(L)
     if n == 0:
         return None
@@ -32,12 +34,12 @@ def GEN_TREE_FROM_LIST(L):
     return gen()
 
 
-def TREE_TO_OUTPUT_LIST(node: "TreeNode", out=[]) -> List:
+def TREE_TO_OUTPUT_LIST(node: "TreeNode", out:List=[]) -> List:
     if node is None:
         return out
 
     # print(f"N: {node} out:{out}")
-
+    
     next_ = node
     while next_ is not None:
         out.append(next_.val)
@@ -52,4 +54,22 @@ def TREE_TO_OUTPUT_LIST(node: "TreeNode", out=[]) -> List:
     return out
 
 
-import collections
+def TEST__ARRAY_TO_TN_AS_ARGS(*args):
+    args = list(args)
+    # print("array to ll [0]", args)
+    for idx,a in enumerate(args):
+        # print(f"\t{idx}: {a} -- {type(a)}")
+        if type(a) == type([]):
+            args[idx] = GEN_TREE_FROM_LIST(a)
+    # print("[1]", args)
+    return args
+
+def TEST__TN_TO_ARRAY_AS_ARGS(*args):
+    args = list(args)
+    # print("ll to array [0]", args)
+    for idx,a in enumerate(args):
+        # print(f"\t{idx}: {a} -- {type(a)}")
+        if type(a) == TreeNode:
+            args[idx] = TREE_TO_OUTPUT_LIST(a)
+    # print("=> [1]", args)
+    return args
