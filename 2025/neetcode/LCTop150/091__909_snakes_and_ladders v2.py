@@ -31,45 +31,73 @@ class Solution:
         # given a square ID number, return the coords to us
         def get_pos_for_number(num):
             nonlocal n
-            n1 = num - 1
-            row = n1 // n
 
-            if row % 2 == 0:
-                col = n1 - (row * n)
+            n1 = num - 1 # convert to 0-based
+            row = n - (n1 // n) - 1 # get row
+
+            revrow = (row - n - 1)
+
+            if revrow % 2 == 0:
+                col = n1 - (revrow * n)
             else:
-                col = n - (num - (row * n))
+                col = n - (num - (revrow * n))
 
             return (row, col)
+            # n1 = num - 1
+            # row = n - (n1 // n)
+            # r1 = row - 1
+
+            # if row % 2 == 0:
+            #     col = n1 - (r1 * n)
+            # else:
+            #     col = n - (num - (r1 * n))
+
+            # return (r1, col)
         
         # now we can start to search
-        v = set()
-        def search(start, end, num_turns=0):
+        def search(start, end):
             nonlocal n
-            print(f"SEARCH {start} -> {end} = {num_turns}")
-            if start == end:
-                return num_turns
+            print(f"SEARCH {start} -> {end}")
+            # if start == end:
+            #     return 0
             
-            sx, sy = get_pos_for_number(start)
-            ex, ey = get_pos_for_number(end)
-            print(f"\t -> Coords: START[{sx}, {sy}] -> END[{ex}, {ey}]")
+            # sx, sy = get_pos_for_number(start)
+            # ex, ey = get_pos_for_number(end)
+            # print(f"\t -> Coords: START[{sx}, {sy}] -> END[{ex}, {ey}]")
 
-            # search our neighbors...
-            if start in v:
-                return -1 # invalid cycle
-            
-            v.add(start)
-            minTurns = n * n
-            for node in range(start + 1, min(start + 6, end)+1):
-                r = search(node, end, num_turns + 1)
-                if r == -1:
+            q = deque([(start, 0)]) # [(num, numTurns to get here), ...]
+            v = {} # num -> num turns to arrive here
+
+            while len(q) > 0:
+                node, turns = q.popleft()
+                print(f"\tCheck node {node} at {turns}")
+
+                if node == end:
+                    # we're done
+                    print(f"==> Reached End in {turns}")
+                    return turns
+                
+                if node in v:
+                    # cycle
+                    print(f"==> CYCLE! {node} in {v}")
                     return -1
                 
-                minTurns = min(r, minTurns)
-            v.remove(start)
+                # explore neighbours
+                v[node] = turns
+                for neighbour in range(node + 1, min(node + 6, end)+1):
+                    # check if we need to follow the board or not before we Q our neighbour
+                    nx, ny = get_pos_for_number(neighbour)
+                    val = board[nx][ny]
 
-            return minTurns
+                    print(f"\t\t Q Neighbor {neighbour}:{nx},{ny} = {val}")
+                    if val == -1:
+                        q.append((neighbour, turns + 1))
+                    else:
+                        q.append((board[nx][ny], turns + 1))
+
+            return -1
         
-        return search(1, n*n, 0)
+        return search(1, n*n)
         
 
 if __name__ == '__main__':
