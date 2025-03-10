@@ -22,9 +22,14 @@ from collections import Counter
 # https://leetcode.com/problems/number-of-islands/description/?envType=study-plan-v2&envId=top-interview-150
 
 '''
-Traverse until we find a "1", then consume them and count the number of islands as we go along
+Idea:
 
-We'll mark visited squares in the grid by setting them to WATER as we go too, to avoid duplicates.
+Look for any edges with an O, and then 'capture' all Os from that point outwards
+and set as some temporary value, INV
+
+We then look through the grid again and set anything that's still O as X, since it
+was not adjacent to an O's on the edges (and thus capturable) and we return any
+SURR back to O since those are uncapturable
 '''
 DIR = [
     (1, 0),
@@ -34,25 +39,54 @@ DIR = [
 ]
 X = "X"
 O = "O"
-SURR = "-"
+INV = "-"
 # doesn't work
 class Solution:
     def solve(self, board: List[List[str]]) -> None:
-        global DIR, X, O, SURR
+        global DIR, X, O, INV
 
         n = len(board)
         m = len(board[0])
 
-        '''
-        Idea:
+        def markInvalid(r, c):
+            # check bounds
+            if not (0 <= r < n and 0 <= c < m):
+                return
+            
+            if board[r][c] != O:
+                return
+            
+            board[r][c] = INV
+            for x, y in DIR:
+                rx = r + x 
+                cy = c + y
 
-        Look for any edges with an O, and then 'capture' all Os from that point outwards
-        and set as SURR
+                markInvalid(rx, cy)
 
-        We then look through the grid again and set anything that's still O as X, since it
-        was not adjacent to an O's on the edges (and thus capturable) and we return any
-        SURR back to O since those are uncapturable
-        '''
+        # check rows
+        for r in range(n):
+            if board[r][0] == O:
+                markInvalid(r, 0)
+
+            if board[r][m - 1] == O:
+                markInvalid(r, m - 1)
+
+        # check cols
+        for c in range(m):
+            if board[0][c] == O:
+                markInvalid(0, c)
+
+            if board[n - 1][c] == O:
+                markInvalid(n - 1, c)
+        
+        # now go through and mark all remaining Os as captured
+        # and anything as INV back to O
+        for r in range(n):
+            for c in range(m):
+                if board[r][c] == O:
+                    board[r][c] = X
+                elif board[r][c] == INV:
+                    board[r][c] = O 
 
         return board # for easier testing
         
