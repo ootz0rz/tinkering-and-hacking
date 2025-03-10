@@ -40,33 +40,51 @@ class Solution:
             graph[a][b] = val # a/b
             graph[b][a] = 1 / val # b/a
 
-        visited = set()
-        def search(start, end, cost):
+        def search(start, end):
             # print(f"SEARCH[s:{start}, e:{end}, c:{cost}]")
-            if start == end: # start/end = 1
+            if start == end: 
                 # print(f"\t{start}=={end} => {cost}")
-                return cost
+                return 1
             
             # direct neighbour so we can just return the value here
             if end in graph[start]:
                 # print(f"\t{end} in graph[{start}]={graph[start]} => {cost * graph[start][end]}")
-                return cost * graph[start][end]
+                return graph[start][end]
             
-            # look for neighbour in tree
-            if start in visited:
-                # print(f"\t{start} already visited {visited}")
+            # BFS path search
+            q = deque([start])
+
+            # to generate out final path we need to recall the node and cost of the 
+            # node pairing that brought us here in our visited set
+            v = {start: (None, 1)} # visited: (referring node, cost [refer/visited])
+
+            path = []
+            while len(q) > 0:
+                a = q.popleft()
+
+                if a == end:
+                    # generate path
+                    refer = v[a]
+                    while refer[0] is not None:
+                        path.append(refer[1])
+                        refer = v[refer[0]]
+                    break
+                
+                # explore rest
+                for b in graph[a]:
+                    if not b in v:
+                        v[b] = (a, graph[a][b])
+                        q.append(b)
+
+            if len(path) == 0:
+                # no valid path found
                 return -1
             
-            visited.add(start)
+            finalCost = 1
+            for p in path:
+                finalCost *= p
             
-            t = cost
-            for n in graph[start]:
-                t *= search(n, end, graph[start][n])
-
-            visited.remove(start)
-            
-            # print(f"\t\t{a} -> {b} = t:{t}")
-            return t
+            return finalCost
 
         # next we want to start processing queries and begin creating our output list
         res = []
@@ -78,7 +96,7 @@ class Solution:
 
             # otherwise we want to search for our match
             # print(f"Search: {a} -> {b}")
-            r = search(a, b, 1)
+            r = search(a, b)
             # print(f"RES: {r}")
             res.append(r)
 
