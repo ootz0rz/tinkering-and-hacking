@@ -25,17 +25,11 @@ EMPTY = -1
 
 # given a square ID number, return the coords to us
 def get_pos_for_number(num, n):
-    n1 = num - 1 # convert to 0-based
-    row = n - (n1 // n) - 1 # get row
-
-    revrow = (n - (row + 1))
-
-    if revrow % 2 == 0:
-        col = n1 - (revrow * n)
-    else:
-        col = n - (num - (revrow * n))
-
-    return (row, col)
+    r = (num - 1) // n
+    c = (num - 1) % n
+    if r % 2:
+        c = n - 1 - c
+    return (r, c)
 
 class Solution:
     def snakesAndLadders(self, board: List[List[int]]) -> int:
@@ -43,10 +37,13 @@ class Solution:
         
         n = len(board)
         
+        # just to make the math easier, we'll reverse the board
+        board.reverse()
+        
         # now we can start to search
         def search(start, end):
             nonlocal n
-            print(f"SEARCH {start} -> {end}")
+            # print(f"SEARCH {start} -> {end}")
             # if start == end:
             #     return 0
             
@@ -60,16 +57,16 @@ class Solution:
 
             while len(q) > 0:
                 node, turns = q.popleft()
-                print(f"\tCheck node {node} at {turns}")
+                # print(f"\tCheck node {node} at {turns}")
 
                 if node == end:
                     # we're done
-                    print(f"==> Reached End in {turns}")
+                    # print(f"==> Reached End in {turns}")
                     return turns
                 
                 if node in v:
                     # skip
-                    print(f"==> Skip {node}")
+                    # print(f"==> Skip {node}")
                     continue
                 
                 # explore neighbours
@@ -79,7 +76,7 @@ class Solution:
                     nx, ny = get_pos_for_number(neighbour, n)
                     val = board[nx][ny]
 
-                    print(f"\t\t Q Neighbor {neighbour}:{nx},{ny} = {val}")
+                    # print(f"\t\t Q Neighbor {neighbour}:{nx},{ny} = {val}")
                     if val == -1:
                         q.append((neighbour, turns + 1))
                     else:
@@ -103,10 +100,10 @@ if __name__ == '__main__':
     s = Solution()
     sf = s.snakesAndLadders
 
-    check_solution_simple(get_pos_for_number, args=[1, 2], expected=(1, 0))
-    check_solution_simple(get_pos_for_number, args=[2, 2], expected=(1, 1))
-    check_solution_simple(get_pos_for_number, args=[3, 2], expected=(0, 1))
-    check_solution_simple(get_pos_for_number, args=[4, 2], expected=(0, 0))
+    check_solution_simple(get_pos_for_number, args=[1, 2], expected=(0, 0))
+    check_solution_simple(get_pos_for_number, args=[2, 2], expected=(0, 1))
+    check_solution_simple(get_pos_for_number, args=[3, 2], expected=(1, 1))
+    check_solution_simple(get_pos_for_number, args=[4, 2], expected=(1, 0))
 
     check_solution_simple(  
         sf,
