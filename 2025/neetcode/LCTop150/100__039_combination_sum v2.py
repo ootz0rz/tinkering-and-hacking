@@ -31,7 +31,7 @@ class Solution:
 
         path = []
         cursum = 0
-        def gen():
+        def gen(start):
             nonlocal res, path, cursum
 
             if cursum > target:
@@ -42,19 +42,19 @@ class Solution:
                 res.append(path[:])
                 return 
 
-            for d in candidates:
+            for idx, d in enumerate(candidates[start:]):
                 if d > target:
                     continue
 
                 path.append(d)
                 cursum += d
 
-                gen()
+                gen(start + idx)
 
                 cursum -= d
                 path.pop()
                     
-        gen()
+        gen(0)
         return res 
 
 
