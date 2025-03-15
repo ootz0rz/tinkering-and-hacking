@@ -23,17 +23,11 @@ from collections import Counter
 
 class Solution:
     def generateParenthesis(self, n: int) -> List[str]:
-        c_o = "("
-        c_c = ")"
-        c_b = "()"
-
         res = []
 
         path = []
         def gen(o, c):
-            nonlocal res
-
-            print("GEN PATH: ", path, " o: ", o, " c: ", c)
+            nonlocal res, path # important to mark as nonlocal or else we end up making copies within!!!
 
             if c < o:
                 return # invalid
@@ -41,23 +35,15 @@ class Solution:
             if o == 0 and c == 0:
                 res.append("".join(path))
                 return
-            
-            if c > 0 and o == 0:
-                opts = c_c
-            elif c == 0 and o > 0:
-                opts = c_o
-            else:
-                opts = c_b
-            
-            for choice in opts:
-                print("\tCHOICE: ", choice, " PATH: ", path)
 
-                path.append(choice)
-                gen(
-                    (o - 1) if choice == "(" else o, 
-                    (c - 1) if choice == ")" else c
-                )
+            if o > 0:
+                path.append("(")
+                gen(o - 1, c)
+                path.pop()
 
+            if c > 0:
+                path.append(")")
+                gen(o, c - 1)
                 path.pop()
 
         gen(n, n)
