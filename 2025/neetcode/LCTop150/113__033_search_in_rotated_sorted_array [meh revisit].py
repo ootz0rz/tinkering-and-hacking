@@ -27,26 +27,21 @@ class Solution:
         while L <= R:
             m = L + ((R - L) // 2)
 
+            # match
             if nums[m] == target:
                 return m
             
-            # figure out if the target is in left half or right half...
-            if target < nums[m]:
-                # check left side first
-                if nums[L] < target:
-                    # nums[L] < target < nums[m] => our target is in [L:m]
+            # left side sorted
+            if nums[m] >= nums[L]:
+                if nums[L] <= target < nums[m]:
                     R = m - 1
                 else:
-                    # nums[L] > target < nums[m] => our target can't be in left side
                     L = m + 1
-            else: # target >= nums[m]
-                # check right side in same way
-                if nums[R] < target:
-                    # nums[R] < target >= nums[m] 
-                    R = m - 1
+            else:
+                if nums[m] < target <= nums[R]:
+                    L = m + 1
                 else:
-                    # nums[R] >= target >= nums[m] => nums[m] < target < nums[R] => target in [m:R]
-                    L = m + 1
+                    R = m - 1
         
         return -1
 
