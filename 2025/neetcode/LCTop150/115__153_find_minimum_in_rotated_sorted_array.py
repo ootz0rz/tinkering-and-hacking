@@ -40,7 +40,6 @@ In this case, L > M < R. Right side appears sorted, explore left side.
 '''
 class Solution:
     def findMin(self, nums: List[int]) -> int:
-        
         L = 0
         R = len(nums) - 1
 
@@ -48,20 +47,14 @@ class Solution:
             # we want to find a midpoint such that num[m-1] > num[m]
             m = L + ((R - L) // 2)
 
-            if nums[m - 1] >= nums[m]:
+            if nums[m - 1] >= nums[m]: # >= lets us catch with len(nums) = 1
                 return nums[m]
             
             # otherwise we need to decide which side to investigate depending on scenario
-            if nums[L] < nums[m]:
-                if nums[m] <= nums[R]:
-                    R = m - 1
-                else:
-                    L = m + 1 
+            if nums[m] <= nums[R]:
+                R = m - 1
             else:
-                if nums[m] <= nums[R]:
-                    R = m - 1
-                else:
-                    L = m + 1
+                L = m + 1
         
         return -999
 
