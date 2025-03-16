@@ -56,7 +56,7 @@ class Solution:
             else:
                 L = m + 1
         
-        return -999
+        return -9999
 
 
 
