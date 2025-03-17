@@ -49,6 +49,7 @@ class Solution:
 
         # finally we need to make sure we don't visit the same node twice
         visited = set()
+        
         while len(h) > 0 and k > 0:
             curSum, i, j = heapq.heappop(h)
             o.append([nums1[i], nums2[j]])
