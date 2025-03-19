@@ -24,7 +24,33 @@ from collections import Counter
 
 class Solution:
     def getSumAbsoluteDifferences(self, nums: List[int]) -> List[int]:
-        pass
+        l = len(nums)
+
+        res = []
+
+        prefix = [nums[0]] * l
+
+        # build prefix arr
+        for idx in range(1, l):
+            prefix[idx] = nums[idx] + prefix[idx - 1]
+        
+        #import pprint; pprint.pprint(prefix)
+
+        # generate final output
+        for idx in range(l):
+            n = nums[idx]
+
+            leftMax = idx * n 
+            rightMax = (l - idx - 1) * n
+
+            leftSum = abs(leftMax - (prefix[idx-1] if 0 <= (idx-1) < l else 0))
+            rightSum = abs(rightMax - (prefix[-1] - prefix[idx]))
+
+            #print(f"\ti:{idx}={n}, max[{leftMax},{rightMax}], sum[{leftSum},{rightSum}] = {leftSum+rightSum}")
+
+            res.append(leftSum + rightSum)
+
+        return res 
 
 
 if __name__ == '__main__':
@@ -37,10 +63,10 @@ if __name__ == '__main__':
     from TestHarness import *
 
     s = Solution()
-    sf = s.minDeletionSize
+    sf = s.getSumAbsoluteDifferences
 
     check_solution_simple(
         sf,
-        args=[[2,2,1]],
-        expected=1,
+        args=[[1,4,6,8,10]],
+        expected=[24,15,13,15,21],
     )
