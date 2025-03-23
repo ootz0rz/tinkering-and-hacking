@@ -25,7 +25,33 @@ from collections import Counter
 class Solution:
     def verifyPreorder(self, preorder: List[int]) -> bool:
         
-        pass
+        idx = 0
+        def validate(minVal, maxVal): #O(n) time and space
+            nonlocal idx, preorder
+
+            if idx == len(preorder):
+                return True # done
+            
+            rootVal = preorder[idx]
+
+            print(f"Validate [{idx}]: {minVal} < {rootVal} < {maxVal}")
+            if not (minVal < rootVal < maxVal):
+                return False
+
+            # since with preorder, with how our input is given, we don't know
+            # if the next is gonna be the left or right side
+            #
+            # so we check both possible conditions on it, and see if at least
+            # one passes
+            idx += 1
+            print(f"\t Left[{idx}]: min={minVal}, max={rootVal}")
+            left = validate(minVal, rootVal)
+            print(f"\t Right[{idx}]: min={minVal}, max={rootVal}")
+            right = validate(rootVal, maxVal)
+
+            return left or right
+
+        return validate(float('-inf'), float('inf'))
 
 
 if __name__ == '__main__':
